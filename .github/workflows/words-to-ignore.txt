@@ -35,6 +35,8 @@ Noncanonicalized
 PKI
 Parsers
 Philipp
+Pomo
+PomoDB
 PomoFlow
 PomoLogic
 PomoRA
