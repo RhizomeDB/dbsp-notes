@@ -31,6 +31,7 @@ Noncanonicalized
 PKI
 Parsers
 Philipp
+PomoFlow
 Pre-Draft
 RSA
 RSASSA-PKCS
@@ -45,12 +46,16 @@ UCANs
 URI
 UTF
 Ukustov
+Untimed
 Validators
 Varints
 Wasm
+ZSet
+ZSets
 Zelenka
 auth
 backend
+bilinearity
 bytesprefix
 bytestring
 canonicalization
@@ -59,11 +64,13 @@ canonicalized
 codec
 conformant
 cryptographic
+dataflow
 delimeters
 desireable
 dholms
 encodings
 expede
+incrementalizing
 inlined
 interpretable
 multicodec
@@ -78,8 +85,10 @@ responder
 secp
 signalled
 signalling
+subcircuit
 trustless
 unpadded
+untimedtraceappend-operator
 url
 v0
 validator
@@ -87,3 +96,4 @@ validators
 varint
 varsig
 whitespace
+zset
