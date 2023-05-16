@@ -165,13 +165,9 @@ These nodes introduce apparently cycles into a circuit, however implementations 
 
 Intuitively, these nodes can be thought of as delaying a stream by one iteration.
 
-TODO revisit this section after I explain operators better
-
 ## 2.8.4 Import Node
 
 Imports a parent stream into a subcircuit.
-
-TODO explain delta0 + mention timestamp refinement
 
 ## 2.8.5 Sink Node
 
@@ -185,34 +181,32 @@ Emits data over a stream, without accepting any inputs from the circuit.
 
 An operator specifies an operation against a stream, and is represented by a node. Operators MAY be stateful, and linear operators are those which can be computed using only the deltas at the current timestamp.
 
-| Name                   | Linearity                  | Input Types                                                 | Output Type  |
-| ---------------------- | -------------------------- | ----------------------------------------------------------- | ------------ |
-| [Aggregate]            | Varies                     | Indexed ZSet                                                | ZSet         |
-| [Consolidate]          | Linear                     | Trace                                                       | ZSet         |
-| [Distinct]             | Non-Linear                 | ZSet                                                        | ZSet         |
-| [Filter]               | Linear                     | ZSet                                                        | ZSet         |
-| [Index With]           | Linear                     | ZSet                                                        | Indexed ZSet |
-| [Inspect]              | Linear                     | ZSet                                                        | ZSet         |
-| [Map]                  | Linear                     | ZSet                                                        | ZSet         |
-| [Negate]               | Linear                     | ZSet                                                        | ZSet         |
-| [Z1 Trace]             | Linear                     | Trace                                                       | Trace        |
-| [Z1]                   | Linear                     | ZSet                                                        | ZSet         |
-| [Distinct Trace]       | Non-Linear                 | ZSet, Trace                                                 | ZSet         |
-| [Join Stream]          | Linear                     | Indexed ZSet, Indexed ZSet                                  | ZSet         |
-| [Join Trace]           | Bilinear                   | Indexed ZSet, Trace                                         | ZSet         |
-| [Minus]                | Linear                     | ZSet, ZSet (TODO: does this need to support indexed ZSets?) | ZSet         |
-| [Plus]                 | Linear                     | ZSet, ZSet (TODO: does this need to support indexed ZSets?) | ZSet         |
-| [Trace Append]         | Non-Linear (TODO kind of?) | ZSet, Trace                                                 | Trace        |
-| [Untimed Trace Append] | Non-Linear (TODO kind of?) | ZSet, Trace                                                 | Trace        |
-| [Distinct Incremental] | Non-Linear                 | ZSet, Trace                                                 | ZSet         |
+| Name                   | Linearity  | Input Types                | Output Type  |
+| ---------------------- | ---------- | ---------------------------| ------------ |
+| [Aggregate]            | Varies     | Indexed ZSet               | ZSet         |
+| [Consolidate]          | Linear     | Trace                      | ZSet         |
+| [Distinct]             | Non-Linear | ZSet                       | ZSet         |
+| [Filter]               | Linear     | ZSet                       | ZSet         |
+| [Index With]           | Linear     | ZSet                       | Indexed ZSet |
+| [Inspect]              | Linear     | ZSet                       | ZSet         |
+| [Map]                  | Linear     | ZSet                       | ZSet         |
+| [Negate]               | Linear     | ZSet                       | ZSet         |
+| [Z1 Trace]             | Linear     | Trace                      | Trace        |
+| [Z1]                   | Linear     | ZSet                       | ZSet         |
+| [Distinct Trace]       | Non-Linear | ZSet, Trace                | ZSet         |
+| [Join Stream]          | Linear     | Indexed ZSet, Indexed ZSet | ZSet         |
+| [Join Trace]           | Bilinear   | Indexed ZSet, Trace        | ZSet         |
+| [Minus]                | Linear     | ZSet                       | ZSet         |
+| [Plus]                 | Linear     | ZSet                       | ZSet         |
+| [Trace Append]         | Non-Linear | ZSet, Trace                | Trace        |
+| [Untimed Trace Append] | Non-Linear | ZSet, Trace                | Trace        |
+| [Distinct Incremental] | Non-Linear | ZSet, Trace                | ZSet         |
 
 ## 2.9.1 Aggregate Operator
 
 Applies an aggregate to all elements of the input stream.
 
 This operator takes an [Indexed ZSet] as input, and applies an aggregate function over it, to return a [ZSet] that summarizes the values under each key, and associating a weight of `1` to each element. The resulting ZSet has no timestamps associated with any element.
-
-(TODO: maybe it should use the circuit's current timestamp. I need to do some experimentation with timestamps because I think I can simplify the model slightly)
 
 Implementations MAY support user defined aggregates, but MUST support the aggregate functions described in the [specification for the query language][PomoLogic Aggregates].
 
@@ -233,8 +227,6 @@ aggregate(count, [
 ## 2.9.2 Consolidate Operator
 
 Merges all deltas in the input trace into a [ZSet]. The resulting ZSet has no timestamps associated with any element, and sums the weights for each key-value pair. Elements with weight equal to zero are discarded.
-
-(TODO: revisit the timestamp point; it may be sufficient to map each element to the largest timestamp used to compute it, while still guaranteeing termination)
 
 This operator is intended to combine deltas from across multiple timestamps into a single ZSet, and is used to export the results of a recursive subcircuit to the parent for further processing.
 
@@ -281,7 +273,6 @@ distinct([
 
 Filters a [ZSet] by a predicate. The predicate MUST be a pure function, returning a boolean.
 
-For example: (TODO: what notation should I use for anonymous functions in the spec?)
 ```
 predicate = fn x -> x >= 1 end
 
@@ -372,17 +363,11 @@ negate([
 
 Returns the previous input [trace].
 
-TODO: Decide whether the feedback operators belong alongside regular operators, or if they should be considered special, because they tend to be used in special feedback nodes that introduce cycles into the circuit.
-
 ## 2.9.10 Z1 Operator
 
 Returns the previous input [ZSet].
 
-TODO: Decide whether the feedback operators belong alongside regular operators, or if they should be considered special, because they tend to be used in special feedback nodes that introduce cycles into the circuit.
-
 ## 2.9.11 Distinct Trace Operator
-
-(TODO Like with Join Stream and Join Trace, it may make more sense to specify this alongside the Distinct operator as suggestions for incrementalizing it).
 
 A variant of [Distinct] that offers more performance for incremental computation and computes across multiple timestamps, with support for use in nested contexts, like recursive circuits. It computes the distinct elements of a [ZSet] in its first argument, with respect to a [Trace] in its second, returning them in a new ZSet. The resulting ZSet has no timestamps associated with any element.
 
@@ -466,8 +451,6 @@ distinct_trace(b11, t11) => [
 
 ## 2.9.12 Join Stream Operator
 
-(TODO might not want this: this is a non-incremental join against streams, that only joins collections from the current timestamp)
-
 Joins two [Indexed ZSets] together. It applies a join function to values with matching keys, returning a [ZSet] containing the resulting elements, with no timestamps associated with those elements, and each element's weight given by the product of the two elements' weights that were joined together.
 
 For example:
@@ -498,15 +481,11 @@ join_stream(join_fun, a, b) => [
 
 ## 2.9.13 Join Trace Operator
 
-(TODO: improve this explanation. It probably makes more sense to instead describe non-incremental join, and then show how bilinearity leads to this incremental version)
-
 A variant of join that joins an [Indexed ZSet] with a [Trace]. This takes advantage of the bilinearity of relational joins in order to support incremental joins across timestamps.
 
 It returns a ZSet containing the resulting elements, with no timestamps associated with each of those elements, and each element's weight given by the product of the two elements' weights that were joined together.
 
 It behaves similarly to [Join Stream], and the first argument represents deltas for the current timestamp, with the second being a trace containing all updates observed thus far. In this way, an incremental join can be implemented as follows:
-
-TODO: Describe the better implementation used in my prototype
 
 ```
 join_fun = ...
@@ -566,8 +545,6 @@ join_trace(join_fun, zset, trace) => [
 
 Subtracts all weights for matching elements in two ZSets. Elements with combined weight equal to zero are discarded.
 
-TODO: Decide whether this needs to work for Indexed ZSets too. It does in my prototype, but I don't know if that's ever needed.
-
 For example:
 ```
 a = [
@@ -593,8 +570,6 @@ minus(a, b) => [
 ## 2.9.15 Plus Operator
 
 Adds all weights for matching keys in two ZSets. Elements with combined weight equal to zero are discarded.
-
-TODO: Decide whether this needs to work for Indexed ZSets too. It does in my prototype, but I don't know if that's ever needed.
 
 For example:
 ```
@@ -624,7 +599,7 @@ Inserts the input ZSet into the input Trace, with the current timestamp.
 
 ## 2.9.17 Untimed Trace Append Operator
 
-Inserts the input ZSet into the input Trace (TODO maybe not needed anymore).
+Inserts the input ZSet into the input Trace 
 
 ## 2.9.18 Distinct Incremental Operator
 
