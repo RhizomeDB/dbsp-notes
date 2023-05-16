@@ -96,6 +96,7 @@ runtimes
 secp
 signalled
 signalling
+stateful
 subcircuit
 subcircuits
 subcomputations
