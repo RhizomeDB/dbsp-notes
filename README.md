@@ -1,17 +1,22 @@
-# PomoFlow v0.1.0
+# Pomo Flow v0.1.0
+
+## Editors
+
+* [Quinn Wilton], [Fission Codes]
+* [Brooklyn Zelenka], [Fission Codes]
 
 ## Authors
 
-* [Quinn Wilton](https://github.com/QuinnWilton), [Fission](https://fission.codes)
-* [Brooklyn Zelenka](https://github.com/expede), [Fission](https://fission.codes)
+* [Quinn Wilton], [Fission Codes]
+* [Brooklyn Zelenka], [Fission Codes]
 
 # Language
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://datatracker.ietf.org/doc/html/rfc2119).
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119].
 
 # Abstract
 
-This document describes PomoFlow, a dataflow runtime for PomoDB. This design is especially suited for incrementalizing programs to efficiently compute over deltas to the input EDB.
+This document describes Pomo Flow, a dataflow runtime for PomoDB. This design is especially suited for incrementalizing programs to efficiently compute over deltas to the input EDB.
 
 # 1. Introduction
 
@@ -19,7 +24,7 @@ Most relational query runtimes implement a variant of semi-naive evaluation, whe
 
 This document describes an alternative runtime, built on dataflow, which represents programs as circuits whose vertices and edges correspond to computations over streams of data. These circuits can be incrementalized to instead operate over deltas, with the results being combined back into a materialized view.
 
-The design is based on ideas from Differential Dataflow, and is heavily inspired by the Database Stream Processor Framework (DBSP). Links to both can be found in the [research appendices](../RESEARCH.md).
+The design is based on ideas from Differential Dataflow, and is heavily inspired by the Database Stream Processor Framework (DBSP). Links to both can be found in the [research repo][Pomo Research].
 
 # 2. Concepts
 
@@ -658,3 +663,15 @@ distinct(batch, [
     {2, nil, 1}
 ]
 ```
+
+
+
+<!-- Links -->
+
+
+
+[RFC 2119]: https://datatracker.ietf.org/doc/html/rfc2119
+[Quinn Wilton]: https://github.com/QuinnWilton
+[Fission Codes]: https://fission.codes
+[Brooklyn Zelenka]: https://github.com/expede
+[Pomo Research]: FIXME
