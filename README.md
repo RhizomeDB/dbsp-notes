@@ -689,11 +689,11 @@ distinct(batch, [
 [Plus Operator]: #2915-plus-operator
 [Plus]: #2915-minus-operator
 [Pomo Research]: https://github.com/RhizomeDB/research
-[PomoLogic]: pomo_logic.md#253-aggregation).
+[PomoLogic]: pomo_logic.md#253-aggregation
 [Quinn Wilton]: https://github.com/QuinnWilton
 [RFC 2119]: https://datatracker.ietf.org/doc/html/rfc2119
 [Sink]: #285-sink-node
-[Source]: #286-source-node) 
+[Source]: #286-source-node
 [Trace Append]: #2916-traceappend-operator
 [Untimed Trace Append]: #2917-untimedtraceappend-operator
 [Z1 Trace]: #299-z1trace-operator
