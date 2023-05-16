@@ -214,7 +214,7 @@ This operator takes an [Indexed ZSet] as input, and applies an aggregate functio
 
 (TODO: maybe it should use the circuit's current timestamp. I need to do some experimentation with timestamps because I think I can simplify the model slightly)
 
-Implementations MAY support user defined aggregates, but MUST support the aggregate functions described in the [specification for the query language][PomoLogic].
+Implementations MAY support user defined aggregates, but MUST support the aggregate functions described in the [specification for the query language][PomoLogic Aggregates].
 
 If additional aggregates are supported, they MUST be pure functions, and implementations are RECOMMENDED to enforce this constraint.
 
@@ -689,7 +689,7 @@ distinct(batch, [
 [Plus Operator]: #2915-plus-operator
 [Plus]: #2915-minus-operator
 [Pomo Research]: https://github.com/RhizomeDB/research
-[PomoLogic]: pomo_logic.md#253-aggregation
+[PomoLogic Aggregtes]: https://github.com/RhizomeDB/PomoLogic#253-aggregation
 [Quinn Wilton]: https://github.com/QuinnWilton
 [RFC 2119]: https://datatracker.ietf.org/doc/html/rfc2119
 [Sink]: #285-sink-node
