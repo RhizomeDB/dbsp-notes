@@ -1,4 +1,16 @@
 Acknowledgements
+traceappend-operator
+PomoLogic
+Bilinear
+N-ary
+PomoRA
+subcircuits
+subcomputations
+DBSP
+repo
+incrementalized
+runtimes
+EDB
 CIDs
 CTF
 Canonicalization

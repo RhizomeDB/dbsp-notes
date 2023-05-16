@@ -1,4 +1,4 @@
-# Pomo Flow v0.1.0
+# PomoFlow v0.1.0
 
 ## Editors
 
