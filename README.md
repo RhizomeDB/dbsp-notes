@@ -28,7 +28,7 @@ This document describes PomoFlow, a [dataflow] query runtime. It is intended for
 
 Most relational query runtimes implement a variant of [semi-naive evaluation], where queries are iteratively refined until they reach a fixed point. Such designs can efficiently compute views over a fixed database, but are insufficient for incrementalizing evaluation over a database that changes over time. Since semi-naive evaluation requires evaluating the same data many times, it can be inefficient for many applications, especially when real time operation is desired.
 
-## 1.2 A Dataflow Engine
+## 1.2 Dataflow Runtime
 
 This document describes an alternative runtime based in the [dataflow] model. This represents programs as circuits (graphs) whose vertices and edges correspond to computation over streams of data. These circuits MAY be incrementalized to instead operate over deltas, with the results combined into a final materialized view. Converting from relation algebra to dataflow is a fully mechanical, static transformation. 
 
@@ -36,11 +36,11 @@ This document describes an alternative runtime based in the [dataflow] model. Th
 
 The following describes the basic concepts and data types of PomoFlow:
 
-## 2.1 ZSet
+## 2.1 $\Bbb{Z}$-Set
 
-A set of elements, each associated with a [weight] and [timestamp].
+A set of triples, each associated with a [weight] and [timestamp]: `{element, timestamp, weight}`.
 
-ZSets can be written as lists of triples:
+$\Bbb{Z}$-Sets MAY be written as lists of triples:
 
 ```elixir
 [
