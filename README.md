@@ -2,17 +2,21 @@
 
 ## Editors
 
-* [Quinn Wilton], [Fission Codes]
-* [Brooklyn Zelenka], [Fission Codes]
+- [Quinn Wilton], [Fission Codes]
+- [Brooklyn Zelenka], [Fission Codes]
 
 ## Authors
 
-* [Quinn Wilton], [Fission Codes]
-* [Brooklyn Zelenka], [Fission Codes]
+- [Quinn Wilton], [Fission Codes]
+- [Brooklyn Zelenka], [Fission Codes]
 
 # Language
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119].
+
+# Dependencies
+
+- [PomoRA]
 
 # Abstract
 
@@ -26,9 +30,7 @@ Most relational query runtimes implement a variant of [semi-naive evaluation], w
 
 ## 1.2 A Dataflow Engine
 
-This document describes an alternative runtime based in the [dataflow] model. This represents programs as circuits (graphs) whose vertices and edges correspond to computation over streams of data. These circuits MAY be incrementalized to instead operate over deltas, with the results combined into a final materialized view.
-
-The design is based on ideas from [Differential Dataflow], and is heavily inspired by the [Database Stream Processor Framework (DBSP)][DBSP].
+This document describes an alternative runtime based in the [dataflow] model. This represents programs as circuits (graphs) whose vertices and edges correspond to computation over streams of data. These circuits MAY be incrementalized to instead operate over deltas, with the results combined into a final materialized view. Converting from relation algebra to dataflow is a fully mechanical, static transformation. 
 
 # 2. Concepts
 
@@ -40,7 +42,7 @@ A set of elements, each associated with a [weight] and [timestamp].
 
 ZSets can be written as lists of triples:
 
-```
+```elixir
 [
     {element1, timestamp1, weight1},
     {element2, timestamp2, weight2},
@@ -104,31 +106,21 @@ Positive weights indicate the number of derivations of that element within the Z
 
 Dataflow engines require a concept of ordering. Each node in the circuit MUST be labelled with an incrementing integer, called its "epoch". PomoFlow represents [timestamp]s for the root circuit using a counter which denotes the current epoch.
 
-Every recursive subcircuit MUST refine its parent's timestamp. This is signalled via a pair which associates the timestamp with the iteration count through the subcircuit. These pairs MUST use product order.
+Every recursive subcircuit MUST refine its parent's timestamp. This is signalled via a pair which associates the timestamp with the iteration count through the subcircuit. The pairs MUST be given in the following order: `{epoch, iteration}`. Both values MUST be given as unsigned integers. They form a [partial order], and MUST use [product order] for comparison.
 
-Implementations MUST represent both epochs and iteration counts as an unsigned integer.
+### 2.6.1 Product Order
 
-For example, a root circuit may progress through the following timestamps:
+Under this example, using product order, `(0, 0) <= (0, 1) <= (1, 1)`, but neither `(0, 2) <= (1, 1)` or `(1, 1) <= (2, 0)` are directly comparable.
 
-$$
-\langle 0, 1, 2, 3, \dots, n \rangle
-$$
+### 2.6.2 Example
+
+Below is an example of a path through a root circuit:
+
+```
+[0, 1, 2, 3, ...]
+```
 
 Whereas a subcircuit under that root may progress through these:
-
-$$
-\langle\\
-  (0, 0),\\
-  (0, 0),\\
-  (0, 1),\\
-  (0, 2),\\
-  (1, 0),\\
-  (1, 1),\\
-  (1, 2),\\
-  \dots,\\
-  (n, m)\\
-\rangle
-$$
 
 ```
 [
@@ -142,11 +134,9 @@ $$
 ]
 ```
 
-Under this example, using product order, `(0, 0) <= (0, 1) <= (1, 1)`, but neither `(0, 2) <= (1, 1)` or `(1, 1) <= (2, 0)`. In all of these cases, the epoch of each timestamp is the first component of the pair, and the iteration is given by its second.
-
 ## 2.6 Circuit
 
-A circuit is an embedding of a PomoRA query plan into a directed graph whose vertices, called [nodes], represent computation against [streams], and whose edges describe those streams.
+A circuit is an embedding of a [PomoRA] query plan into a directed graph whose vertices, called [nodes], represent computation against [streams], and whose edges describe those streams.
 
 Circuits may contain subcircuits, representing recursive subcomputations that evaluate to a fixed point every iteration.
 
@@ -667,6 +657,10 @@ distinct(batch, [
 ]
 ```
 
+# 3 Prior Art
+
+The design presented here is based on ideas from [Differential Dataflow], and is heavily inspired by the [Database Stream Processor Framework (DBSP)][DBSP].
+
 <!-- Links -->
 
 [Aggregate]: #291-aggregate-operator
@@ -693,6 +687,7 @@ distinct(batch, [
 [Operator]: #281-operator-node
 [Plus Operator]: #2915-plus-operator
 [Plus]: #2915-minus-operator
+[PomoRA]: https://github.com/RhizomeDB/PomoRA
 [Pomo Research]: https://github.com/RhizomeDB/research
 [PomoLogic Aggregates]: https://github.com/RhizomeDB/PomoLogic#253-aggregation
 [Quinn Wilton]: https://github.com/QuinnWilton
@@ -707,6 +702,8 @@ distinct(batch, [
 [dataflow]: https://en.wikipedia.org/wiki/Dataflow
 [nodes]: #28-node
 [operation]: #29-operator
+[partial order]: https://en.wikipedia.org/wiki/Partially_ordered_set#Partial_order
+[product order]: #261-product-order
 [semi-naive evaluation]: https://pages.cs.wisc.edu/~paris/cs784-s21/lectures/lecture9.pdf
 [streams]: #27-stream
 [timestamp]: #25-time
