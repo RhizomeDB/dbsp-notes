@@ -116,7 +116,7 @@ Every recursive subcircuit MUST refine its parent's timestamp. This is signalled
 
 ### 2.6.1 Product Order
 
-Under this example, using product order, `(0, 0) <= (0, 1) <= (1, 1)`, but neither `(0, 2) <= (1, 1)` nor `(1, 1) <= (2, 0)` are directly comparable.
+Under this example, using product order, $\langle 0, 0 \rangle \le \langle 0, 1 \rangle \le \langle 1, 1 \rangle$, but neither $\langle 0, 2 \rangle \not\le \langle 1, 1 \rangle$ nor $\langle 1, 1 \rangle \not\le \langle 2, 0 \rangle$ are directly comparable.
 
 ### 2.6.2 Example
 
@@ -144,13 +144,13 @@ Whereas a subcircuit under that root may progress through these:
 
 A circuit is an embedding of a [PomoRA] query plan into a directed (potentially cyclic) graph whose vertices ([nodes]) represent computation over [streams], and whose edges describe those streams.
 
-Circuits MAY contain subcircuits, which MUST represent recursive subcomputations that evaluate to a fixed point every iteration. For each iteration, a circuit is run by evaluating its nodes (subcircuits and single nodes) in some topologically sorted order, until a fixed point is reached.
+Circuits MAY contain subcircuits, which MUST represent recursive subcomputations that evaluate to a fixed point by the end of every iteration. For each iteration, a circuit is run by evaluating its nodes (subcircuits and single nodes) in some topologically sorted order, until a fixed point is reached.
 
 ## 2.7 Stream
 
 A stream is an infinite sequence of values, each associated with subsequent timestamps. It is RECOMMENDED that streams not be reified directly, and they MAY instead be modeled as cells containing the element field in the stream at the current timestamp.
 
-The edges between nodes in a circuit describe streams of values flowing from the output of one node to the input of another, and these edges SHOULD be defined in terms of the IDs of the nodes they connect.
+The edges between nodes in a circuit describe streams of values flowing from the output of one node to the input of another. It is RECOMMENDED that these edges be defined in terms of the IDs of the nodes they connect.
 
 ## 2.8 Node
 
@@ -159,6 +159,8 @@ A node is a vertex of a circuit, and describes a computation over the circuit's 
 Every node is associated with both a local ID and a global ID. Local IDs MUST be unique among all nodes belonging to the same circuit, and global IDs MUST be unique across all nodes.
 
 It is RECOMMENDED that local IDs be represented by a node's index into its parents nodes, and that global IDs be represented as the path formed by the local IDs of a node's ancestors.
+
+Nodes come in several types:
 
 | Type       | Inputs | Outputs |
 | ---------- | ------ | ------- |
@@ -171,72 +173,70 @@ It is RECOMMENDED that local IDs be represented by a node's index into its paren
 
 ## 2.8.1 Operator Node
 
-Performs an [operation] against its input streams, outputting the result over a stream.
+An operator node performs an [operation] on its input stream(s), outputting the result over a stream.
 
 Operator nodes achieve a fixed point when their associated operator has done so.
 
 ## 2.8.2 Child Node
 
-Introduces a subcircuit that can be used to perform recursive computations. Such circuits evaluate to a fixed point each iteration, using the same rules as the root circuit, then emit their result to downstream nodes.
+A child node introduces a subcircuit that MUST used to perform recursive computations. Such circuits evaluate to a fixed point each iteration, using the same rules as the root circuit, then emit their result to downstream nodes.
 
 ## 2.8.3 Feedback Node
 
-Introduces a temporal edge between nodes in subsequent iterations of a circuit. Such nodes support persisting data between iterations of a circuit, and are also used to implement recursive circuits by propagating partial results forward in time until a fixed point is reached.
+Feedback nodes introduce a temporal edge between nodes in subsequent iterations of a circuit. Such nodes support persisting data between iterations of a circuit, and are also used to implement recursive circuits by propagating partial results forward in time until a fixed point is reached.
 
-These nodes introduce apparently cycles into a circuit, however implementations SHOULD NOT treat them as such, and SHOULD consider their output stream to be lazily evaluated as part of the subsequent iteration.
+These nodes introduce apparent cycles into a circuit, however implementations SHOULD NOT treat them as such. Instead, their output stream SHOULD be lazily evaluated as part of the subsequent iteration.
 
 Intuitively, these nodes can be thought of as delaying a stream by one iteration.
 
 ## 2.8.4 Import Node
 
-Imports a parent stream into a subcircuit.
+Import nodes attach a parent stream to a subcircuit.
 
 ## 2.8.5 Sink Node
 
-Performs an operation against its input streams, without outputting anything.
+Sink nodes perform an operation against its input streams. They MUST NOT produce circuit outputs.
 
 ## 2.8.6 Source Node
 
-Emits data over a stream, without accepting any inputs from the circuit.
+Source nodes emit data over a stream. They MUST NOT accept any inputs from the circuit.
 
 ## 2.9 Operator
 
 An operator specifies an operation against a stream, and is represented by a node. Operators MAY be stateful, and linear operators are those which can be computed using only the deltas at the current timestamp.
 
-| Name                   | Linearity  | Input Types                | Output Type  |
-| ---------------------- | ---------- | ---------------------------| ------------ |
-| [Aggregate]            | Varies     | Indexed $\Bbb{Z}$-Set               | $\Bbb{Z}$-Set         |
-| [Consolidate]          | Linear     | Trace                      | $\Bbb{Z}$-Set         |
-| [Distinct]             | Non-Linear | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
-| [Filter]               | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
-| [Index With]           | Linear     | $\Bbb{Z}$-Set                       | Indexed $\Bbb{Z}$-Set |
-| [Inspect]              | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
-| [Map]                  | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
-| [Negate]               | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
-| [Z1 Trace]             | Linear     | Trace                      | Trace        |
-| [Z1]                   | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
-| [Distinct Trace]       | Non-Linear | $\Bbb{Z}$-Set, Trace                | $\Bbb{Z}$-Set         |
+| Name                   | Linearity  | Input Types                                  | Output Type           |
+|------------------------|------------|----------------------------------------------|-----------------------|
+| [Aggregate]            | Varies     | Indexed $\Bbb{Z}$-Set                        | $\Bbb{Z}$-Set         |
+| [Consolidate]          | Linear     | Trace                                        | $\Bbb{Z}$-Set         |
+| [Distinct]             | Non-Linear | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
+| [Filter]               | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
+| [Index With]           | Linear     | $\Bbb{Z}$-Set                                | Indexed $\Bbb{Z}$-Set |
+| [Inspect]              | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
+| [Map]                  | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
+| [Negate]               | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
+| [Z1 Trace]             | Linear     | Trace                                        | Trace                 |
+| [Z1]                   | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
+| [Distinct Trace]       | Non-Linear | $\Bbb{Z}$-Set, Trace                         | $\Bbb{Z}$-Set         |
 | [Join Stream]          | Linear     | Indexed $\Bbb{Z}$-Set, Indexed $\Bbb{Z}$-Set | $\Bbb{Z}$-Set         |
-| [Join Trace]           | Bilinear   | Indexed $\Bbb{Z}$-Set, Trace        | $\Bbb{Z}$-Set         |
-| [Minus]                | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
-| [Plus]                 | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
-| [Trace Append]         | Non-Linear | $\Bbb{Z}$-Set, Trace                | Trace        |
-| [Untimed Trace Append] | Non-Linear | $\Bbb{Z}$-Set, Trace                | Trace        |
-| [Distinct Incremental] | Non-Linear | $\Bbb{Z}$-Set, Trace                | $\Bbb{Z}$-Set         |
+| [Join Trace]           | Bilinear   | Indexed $\Bbb{Z}$-Set, Trace                 | $\Bbb{Z}$-Set         |
+| [Minus]                | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
+| [Plus]                 | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
+| [Trace Append]         | Non-Linear | $\Bbb{Z}$-Set, Trace                         | Trace                 |
+| [Untimed Trace Append] | Non-Linear | $\Bbb{Z}$-Set, Trace                         | Trace                 |
+| [Distinct Incremental] | Non-Linear | $\Bbb{Z}$-Set, Trace                         | $\Bbb{Z}$-Set         |
 
 ## 2.9.1 Aggregate Operator
 
-Applies an aggregate to all elements of the input stream.
-
-This operator takes an [Indexed Z-Set] as input, and applies an aggregate function over it, to return a [Z-Set] that summarizes the values under each key, and associating a weight of `1` to each element. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
+The aggregate operatortakes an [Indexed Z-Set] as input, and applies an aggregate function over it, to return a [Z-Set] that summarizes the values under each key, and associating a weight of `1` to each element. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
 
 Implementations MAY support user defined aggregates, but MUST support the aggregate functions described in the [specification for the query language][PomoLogic Aggregates].
 
-If additional aggregates are supported, they MUST be pure functions, and implementations are RECOMMENDED to enforce this constraint.
+If additional aggregates are supported, they MUST be pure functions. It is RECOMMENDED thta implementations enforce this constraint.
 
 For example:
 
-```elixier
+```elixir
 aggregate(count, [
     {{1, "foo"}, 0, 1},
     {{1, "bar"}, 0, 1},
@@ -249,7 +249,7 @@ aggregate(count, [
 
 ## 2.9.2 Consolidate Operator
 
-Merges all deltas in the input trace into a [Z-Set]. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element, and sums the weights for each key-value pair. Elements with weight equal to zero are discarded.
+Consolidation operators merge all deltas in the input trace into a [Z-Set]. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element, and sums the weights for each key-value pair. Elements with weight equal to zero are discarded.
 
 This operator is intended to combine deltas from across multiple timestamps into a single $\Bbb{Z}$-Set, and is used to export the results of a recursive subcircuit to the parent for further processing.
 
@@ -299,9 +299,9 @@ distinct([
 Filters a [Z-Set] by a predicate. The predicate MUST be a pure function, returning a boolean.
 
 ```elixir
-predicate = fn x -> x >= 1 end
+is_positive = fn x -> x >= 1 end
 
-filter(predicate, [
+filter(is_positive, [
     {0, 0, 1},
     {1, 0, 2},
     {2, 1, -3}
@@ -313,7 +313,7 @@ filter(predicate, [
 
 ## 2.9.5 Index With Operator
 
-Groups elements of a [Z-Set] according to some key function, returning an [Indexed Z-Set].
+Indexing operators group elements of a [Z-Set] according to some key function, returning an [Indexed Z-Set].
 
 For example:
 
@@ -333,7 +333,7 @@ index_with(key_function, [
 
 ## 2.9.6 Inspect Operator
 
-Applies a callback to a [Z-Set], returning the original $\Bbb{Z}$-Set.
+The inspect operator applies a callback to a [Z-Set], and returns the original $\Bbb{Z}$-Set.
 
 This operator is primarily intended as a debugging aid, and can be used to output the contents of streams at runtime.
 
@@ -353,14 +353,14 @@ inspect(inspect_fun, [
 
 ## 2.9.7 Map Operator
 
-Transforms elements of a [Z-Set] according to some function. The predicate MUST be a pure function.
+The map operator transforms elements of a [Z-Set] according to some function. The predicate MUST be a pure function.
 
 For example:
 
 ```elixir
-predicate = fn x -> x >= 1 end
+is_positive = fn x -> x >= 1 end
 
-filter(predicate, [
+filter(is_positive, [
     {0, 0, 1},
     {1, 0, 2},
     {2, 1, -3}
@@ -372,7 +372,7 @@ filter(predicate, [
 
 ## 2.9.8 Negate Operator
 
-Negates the weights of each element in a [Z-Set].
+The negate operator flips the sign on the weight of each element in a [Z-Set].
 
 For example:
 
@@ -390,29 +390,29 @@ negate([
 
 ## 2.9.9 Z1 Trace Operator
 
-Returns the previous input [trace].
+The trace operator returns the previous input [trace].
 
 ## 2.9.10 Z1 Operator
 
-Returns the previous input [Z-Set].
+The Z1 operator returns the previous input [Z-Set].
 
 ## 2.9.11 Distinct Trace Operator
 
-A variant of [Distinct] that offers more performance for incremental computation and computes across multiple timestamps, with support for use in nested contexts, like recursive circuits. It computes the distinct elements of a [Z-Set] in its first argument, with respect to a [Trace] in its second, returning them in a new $\Bbb{Z}$-Set. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
+Distinct trace ia a variant of [Distinct] that offers more performance for incremental computation and computes across multiple timestamps, with support for use in nested contexts, like recursive circuits. It computes the distinct elements of a [Z-Set] in its first argument, with respect to a [Trace] in its second, returning them in a new $\Bbb{Z}$-Set. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
 
 Note that because operator computes the delta of [Distinct], it is possible for returned elements to have negative weights, if those elements are deleted between timestamps.
 
 Distinct is not a linear operation, and requires access to the entire history of updates, however there's a few observations that can reduce the search space of timestamps to examine.
 
-Consider evaluating the operator at some [timestamp] `t = (e, i)`, where `e` denotes the epoch, and `i` denotes the iteration.
+Consider evaluating the operator at some [timestamp] $t \eq \langle e, i \rangle$, where $e$ denotes the epoch, and $i$ denotes the iteration.
 
 Then there are two possible classes of elements which may be returned:
 1) Elements in the current input $\Bbb{Z}$-Set
-2) Elements that were returned in response to a previous input, at timestamp `(e, i0)`, such that `i0 < i`, and where the element was also returned at timestamp `(e0, i)`, such that `e0 < e`
+2) Elements that were returned in response to a previous input, at timestamp $\langle e, i_0 \rangle$, such that $i_0 \lt i$, and where the element was also returned at timestamp $\langle e_0, i \rangle$, such that $e_0 \lt e$.
 
-For each element, with weight `w`, meeting at least one of the above requirements, if that element does not appear in the trace, it is returned in the $\Bbb{Z}$-Set with weight 1. Otherwise, the following routine is performed:
+For each element, with weight $w$, meeting at least one of the above requirements, if that element does not appear in the trace, it is returned in the $\Bbb{Z}$-Set with weight 1. Otherwise, the following routine is performed:
 
-1) `w1` is computed, as the sum of all weights in which that element appears at times `(e0, i0)` for `e0 < e` and `i0 < i`
+1) $w_1$ is computed, as the sum of all weights in which that element appears at times `(e0, i0)` for `e0 < e` and `i0 < i`
 2) `w2` is computed, as the sum of all weights in which that element appears at times `(e0, i)` for `e0 < e`
 3) `w3` is computed, as the sum of all weights in which that element appears at times `(e, i0)` for `i0 < i`
 4) `d0` is computed, such that:
