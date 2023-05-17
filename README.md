@@ -42,7 +42,7 @@ A set of elements, each associated with a [weight] and [timestamp].
 
 ZSets can be written as lists of triples:
 
-```
+```elixir
 [
     {element1, timestamp1, weight1},
     {element2, timestamp2, weight2},
@@ -60,7 +60,7 @@ A set of key-value pairs, each associated with a [weight] and [timestamp].
 
 Indexed ZSets MAY be written as lists of triples:
 
-```
+```elixir
 [
     {{key1, value1}, timestamp1, weight1},
     {{key2, value2}, timestamp2, weight2},
@@ -82,7 +82,7 @@ A collection of deltas, combining multiple ZSets or Indexed ZSets.
 
 Traces MAY be written as lists of 4-tuples:
 
-```
+```elixir
 [
     {key1, value1, timestamp1, weight1},
     {key2, value2, timestamp2, weight2},
@@ -116,13 +116,13 @@ Under this example, using product order, `(0, 0) <= (0, 1) <= (1, 1)`, but neith
 
 Below is an example of a path through a root circuit:
 
-```
+```elixir
 [0, 1, 2, 3, ...]
 ```
 
 Whereas a subcircuit under that root may progress through these:
 
-```
+```elixir
 [
     (0, 0),
     (0, 1),
@@ -231,7 +231,8 @@ Implementations MAY support user defined aggregates, but MUST support the aggreg
 If additional aggregates are supported, they MUST be pure functions, and implementations are RECOMMENDED to enforce this constraint.
 
 For example:
-```
+
+```elixier
 aggregate(count, [
     {{1, "foo"}, 0, 1},
     {{1, "bar"}, 0, 1},
@@ -249,7 +250,8 @@ Merges all deltas in the input trace into a [ZSet]. The resulting ZSet has no ti
 This operator is intended to combine deltas from across multiple timestamps into a single ZSet, and is used to export the results of a recursive subcircuit to the parent for further processing.
 
 For example:
-```
+
+```elixir
 consolidate([
     {0, 0, 0, 1},
     {0, 0, 0, -1},
@@ -258,7 +260,7 @@ consolidate([
     {1, 2, 0, 2},
     {1, 3, 0, 1},
     {1, 3, 0, -1},
-    {1, 4, 0 -1},
+    {1, 4, 0, -1},
     {2, 2, 0, 1},
     {2, 4, 0 1}
 ]) => [
@@ -275,7 +277,8 @@ consolidate([
 Returns a ZSet containing elements in the input [ZSet] with positive weight, replacing their weight with `1`.
 
 For example:
-```
+
+```elixir
 distinct([
     {0, 0, 1},
     {1, 0, 2},
@@ -291,7 +294,7 @@ distinct([
 
 Filters a [ZSet] by a predicate. The predicate MUST be a pure function, returning a boolean.
 
-```
+```elixir
 predicate = fn x -> x >= 1 end
 
 filter(predicate, [
@@ -309,7 +312,8 @@ filter(predicate, [
 Groups elements of a [ZSet] according to some key function, returning an [Indexed ZSet].
 
 For example:
-```
+
+```elixir
 key_function = fn {src, dst, cost} -> src end
 
 index_with(key_function, [
@@ -330,7 +334,8 @@ Applies a callback to a [ZSet], returning the original ZSet.
 This operator is primarily intended as a debugging aid, and can be used to output the contents of streams at runtime.
 
 For example:
-```
+
+```elixir
 inspect_fun = fn x -> IO.inspect(x) end
 
 inspect(inspect_fun, [
@@ -347,7 +352,8 @@ inspect(inspect_fun, [
 Transforms elements of a [ZSet] according to some function. The predicate MUST be a pure function.
 
 For example:
-```
+
+```elixir
 predicate = fn x -> x >= 1 end
 
 filter(predicate, [
@@ -365,7 +371,8 @@ filter(predicate, [
 Negates the weights of each element in a [ZSet].
 
 For example:
-```
+
+```elixir
 negate([
     {0, 0, 1},
     {1, 0, -1},
@@ -415,7 +422,7 @@ For each element, with weight `w`, meeting at least one of the above requirement
 
 For example:
 
-```
+```elixir
 b00 = [
     {0, {0, 0}, 1},
     {2, {0, 0}, 1},
@@ -472,7 +479,8 @@ distinct_trace(b11, t11) => [
 Joins two [Indexed ZSets] together. It applies a join function to values with matching keys, returning a [ZSet] containing the resulting elements, with no timestamps associated with those elements, and each element's weight given by the product of the two elements' weights that were joined together.
 
 For example:
-```
+
+```elixir
 join_fun =
     fn key, v1, v2 ->
         {key, {v1, v2}}
@@ -505,7 +513,7 @@ It returns a ZSet containing the resulting elements, with no timestamps associat
 
 It behaves similarly to [Join Stream], and the first argument represents deltas for the current timestamp, with the second being a trace containing all updates observed thus far. In this way, an incremental join can be implemented as follows:
 
-```
+```elixir
 join_fun = ...
 
 join_fun_flipped =
@@ -528,7 +536,8 @@ incremental_join(join_fun, a, b) =
 Where `z1_trace(x)` denotes an application of the [Z1 Trace] operator, `join_fun_flipped` flips the value arguments of `join_fun`, and `+` denotes the [Plus Operator].
 
 For example:
-```
+
+```elixir
 join_fun =
     fn key, v1, v2 ->
         {key, {v1, v2}}
@@ -564,7 +573,8 @@ join_trace(join_fun, zset, trace) => [
 Subtracts all weights for matching elements in two ZSets. Elements with combined weight equal to zero are discarded.
 
 For example:
-```
+
+```elixir
 a = [
     {0, 0, 1},
     {1, 0, 1},
@@ -590,7 +600,8 @@ minus(a, b) => [
 Adds all weights for matching keys in two ZSets. Elements with combined weight equal to zero are discarded.
 
 For example:
-```
+
+```elixir
 a = [
     {0, 0, 1},
     {1, 0, 1},
@@ -628,7 +639,8 @@ Note that because operator computes the delta of [Distinct], it is possible for 
 This computation can be performed by returning the elements in the ZSet whose weight has the opposite sign as the sum of all matching weights in the Trace.
 
 For example:
-```
+
+```elixir
 batch = [
     {0, nil, 2},
     {2, nil, 1},
