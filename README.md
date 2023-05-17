@@ -110,7 +110,9 @@ Implementations MUST represent both epochs and iteration counts as an unsigned i
 
 For example, a root circuit may progress through the following timestamps:
 
-$\langle 0, 1, 2, 3, \dots, n \rangle$
+$$
+\langle 0, 1, 2, 3, \dots, n \rangle
+$$
 
 Whereas a subcircuit under that root may progress through these:
 
@@ -123,7 +125,8 @@ $$
   (1, 0),\\
   (1, 1),\\
   (1, 2),\\
-  \dots\\
+  \dots,\\
+  (n, m)\\
 \rangle
 $$
 
