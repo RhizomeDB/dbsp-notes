@@ -1,36 +1,17 @@
-# PomoFlow v0.1.0
-
-## Editors
-
-- [Quinn Wilton], [Fission Codes]
-- [Brooklyn Zelenka], [Fission Codes]
-
-## Authors
-
-- [Quinn Wilton], [Fission Codes]
-- [Brooklyn Zelenka], [Fission Codes]
-
-# Language
-
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119].
+# Notes on DBSP
+## An Incremental Query Engine
 
 # Dependencies
 
 - [PomoRA]
 
-# Abstract
-
-This document describes PomoFlow, a [dataflow] query runtime. It is intended for incrementalizing programs to efficiently compute over deltas from an extensional database.
-
 # 1. Introduction
 
-## 1.1 Motivation
-
-Most relational query runtimes implement a variant of [semi-naive evaluation], where queries are iteratively refined until they reach a fixed point. Such designs can efficiently compute views over a fixed database, but are insufficient for incrementalizing evaluation over a database that changes over time. Since semi-naive evaluation requires evaluating the same data many times, it can be inefficient for many applications, especially when real time operation is desired.
-
-## 1.2 Dataflow Runtime
+Most datalog query runtimes implement a variant of [semi-naive evaluation], where queries are iteratively refined until they reach a fixed point. Such designs can efficiently compute views over a fixed database, but are insufficient for incrementalizing evaluation over a database that changes over time. Since semi-naive evaluation requires evaluating the same data many times, it can be inefficient for many applications, especially when real time operation is desired.
 
 This document describes an alternative runtime based in the [dataflow] model. This represents programs as circuits (graphs) whose vertices and edges correspond to computation over streams of data. These circuits MAY be incrementalized to instead operate over deltas, with the results combined into a final materialized view. Converting from relation algebra to dataflow is a fully mechanical, static transformation. 
+
+[DBSP] and [Differential Dataflow] were not developed as part of the Rhizome DB project. The papers and documentation lacked some detail required to implement such a system. This document contains the basics that are required to put these ideas into practice.
 
 # 2. Concepts
 
