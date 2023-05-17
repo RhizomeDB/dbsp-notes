@@ -416,11 +416,11 @@ For each element, with weight $w$, meeting at least one of the above requirement
 2) $w_2$ is computed, as the sum of all weights in which that element appears at times $\langle e_0, i \rangle$ for $e_0 < e$
 3) $w_3$ is computed, as the sum of all weights in which that element appears at times $\langle e, i_0 \rangle$ for $i_0 < i$
 4) $d_0$ is computed, such that:
-   1) $d_0 = 1$, if $w_1 \le = \land w1 + w2 > 0$
+   1) $d_0 = 1$, if $w_1 \le \land w1 + w2 > 0$
    2) $d_0 = -1$, if $w_1 > 0 \land w1 + w2 \le 0$
    3) $d_0 = 0$, otherwise
 5) $d_1$ is computed, such that:
-   1) $d_1 = 1$, if $w_1 + w_3 le 0 \land w_1 + w_2 + w_3 + w > 0$
+   1) $d_1 = 1$, if $w_1 + w_3 \le 0 \land w_1 + w_2 + w_3 + w > 0$
    2) $d_1 = -1$, if $w_1 + w_3 > 0 \land w_1 + w_3 + w_4 \le 0$
 6) If $d_1 - d_0 \ne 0$, then the element is returned in the $\Bbb{Z}$-Set, with weight $d_1 - d_0$
 
@@ -480,15 +480,12 @@ distinct_trace(b11, t11) => [
 
 ## 2.9.12 Join Stream Operator
 
-The join stream operator merges two [Indexed $\Bbb{Z}$-Sets] together. It applies a join function to values with matching keys, returning a [Z-Set] containing the resulting elements, with no timestamps associated with those elements, and each element's weight given by the product of the two elements' weights that were joined.
+The join stream operator MUST merge two [Indexed $\Bbb{Z}$-Sets]. It MUST apply a join function to values with matching keys, returning a [Z-Set] containing the resulting elements. There MUST be no timestamps associated with the return elements, and each output element's weight MUST be given by the product of the two elements' weights that were joined.
 
 For example:
 
 ```elixir
-join_fun =
-    fn key, v1, v2 ->
-        {key, {v1, v2}}
-    end
+join_fun = fn key, v1, v2 -> {key, {v1, v2}} end
 
 a = [
     {{:a, 1}, 0, 1},
