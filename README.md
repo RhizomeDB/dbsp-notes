@@ -50,15 +50,15 @@ $\Bbb{Z}$-Sets MAY be written as lists of triples:
 ]
 ```
 
-Implementations SHOULD support efficient sequential access of a ZSet, first by element, and then by timestamp.
+Implementations SHOULD support efficient sequential access of a $\Bbb{Z}$-Set, first by element, and then by timestamp.
 
-Some operations return ZSets without timestamp information, and implementations MAY specialize a variant of the data structure for those cases.
+Some operations return $\Bbb{Z}$-Sets without timestamp information, and implementations MAY specialize a variant of the data structure for those cases.
 
-## 2.2 Indexed ZSet
+## 2.2 Indexed $\Bbb{Z}$-Set
 
 A set of key-value pairs, each associated with a [weight] and [timestamp].
 
-Indexed ZSets MAY be written as lists of triples:
+Indexed $\Bbb{Z}$-Sets MAY be written as lists of triples:
 
 ```elixir
 [
@@ -68,17 +68,17 @@ Indexed ZSets MAY be written as lists of triples:
 ]
 ```
 
-Implementations SHOULD support efficient sequential access of an Indexed ZSet in the following order:
+Implementations SHOULD support efficient sequential access of an Indexed $\Bbb{Z}$-Set in the following order:
 
 1. By key
 2. By value
 3. By timestamp.
 
-Some operations return Indexed ZSets without timestamp information, and implementations MAY specialize a variant of the data structure for those cases.
+Some operations return Indexed $\Bbb{Z}$-Sets without timestamp information, and implementations MAY specialize a variant of the data structure for those cases.
 
 ## 2.3 Trace
 
-A collection of deltas, combining multiple ZSets or Indexed ZSets.
+A collection of deltas, combining multiple $\Bbb{Z}$-Sets or Indexed $\Bbb{Z}$-Sets.
 
 Traces MAY be written as lists of 4-tuples:
 
@@ -90,17 +90,17 @@ Traces MAY be written as lists of 4-tuples:
 ]
 ```
 
-Indexed ZSets SHOULD be merged into a trace using the key, value, timestamp, and weight associated with each element.
+Indexed $\Bbb{Z}$-Sets SHOULD be merged into a trace using the key, value, timestamp, and weight associated with each element.
 
-ZSets SHOULD be merged into the trace by treating the element itself as a key, and associating no value with the delta.
+$\Bbb{Z}$-Sets SHOULD be merged into the trace by treating the element itself as a key, and associating no value with the delta.
 
 Implementations MUST support efficient sequential access of traces, first by key, and then by value, and lastly by timestamp.
 
 ## 2.4 Weight
 
-Weights describe the number of downstream dependency count for a [ZSet]. It MUST be represented by an integer, and MAY be either positive or negative.
+Weights describe the number of downstream dependency count for a [$\Bbb{Z}$-Set]. It MUST be represented by an integer, and MAY be either positive or negative.
 
-Positive weights indicate the number of derivations of that element within the ZSet. Negative weights indicate the number of deletions of that element.
+Positive weights indicate the number of derivations of that element within the $\Bbb{Z}$-Set. Negative weights indicate the number of deletions of that element.
 
 ## 2.6 Time
 
@@ -201,30 +201,30 @@ An operator specifies an operation against a stream, and is represented by a nod
 
 | Name                   | Linearity  | Input Types                | Output Type  |
 | ---------------------- | ---------- | ---------------------------| ------------ |
-| [Aggregate]            | Varies     | Indexed ZSet               | ZSet         |
-| [Consolidate]          | Linear     | Trace                      | ZSet         |
-| [Distinct]             | Non-Linear | ZSet                       | ZSet         |
-| [Filter]               | Linear     | ZSet                       | ZSet         |
-| [Index With]           | Linear     | ZSet                       | Indexed ZSet |
-| [Inspect]              | Linear     | ZSet                       | ZSet         |
-| [Map]                  | Linear     | ZSet                       | ZSet         |
-| [Negate]               | Linear     | ZSet                       | ZSet         |
+| [Aggregate]            | Varies     | Indexed $\Bbb{Z}$-Set               | $\Bbb{Z}$-Set         |
+| [Consolidate]          | Linear     | Trace                      | $\Bbb{Z}$-Set         |
+| [Distinct]             | Non-Linear | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
+| [Filter]               | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
+| [Index With]           | Linear     | $\Bbb{Z}$-Set                       | Indexed $\Bbb{Z}$-Set |
+| [Inspect]              | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
+| [Map]                  | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
+| [Negate]               | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
 | [Z1 Trace]             | Linear     | Trace                      | Trace        |
-| [Z1]                   | Linear     | ZSet                       | ZSet         |
-| [Distinct Trace]       | Non-Linear | ZSet, Trace                | ZSet         |
-| [Join Stream]          | Linear     | Indexed ZSet, Indexed ZSet | ZSet         |
-| [Join Trace]           | Bilinear   | Indexed ZSet, Trace        | ZSet         |
-| [Minus]                | Linear     | ZSet                       | ZSet         |
-| [Plus]                 | Linear     | ZSet                       | ZSet         |
-| [Trace Append]         | Non-Linear | ZSet, Trace                | Trace        |
-| [Untimed Trace Append] | Non-Linear | ZSet, Trace                | Trace        |
-| [Distinct Incremental] | Non-Linear | ZSet, Trace                | ZSet         |
+| [Z1]                   | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
+| [Distinct Trace]       | Non-Linear | $\Bbb{Z}$-Set, Trace                | $\Bbb{Z}$-Set         |
+| [Join Stream]          | Linear     | Indexed $\Bbb{Z}$-Set, Indexed $\Bbb{Z}$-Set | $\Bbb{Z}$-Set         |
+| [Join Trace]           | Bilinear   | Indexed $\Bbb{Z}$-Set, Trace        | $\Bbb{Z}$-Set         |
+| [Minus]                | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
+| [Plus]                 | Linear     | $\Bbb{Z}$-Set                       | $\Bbb{Z}$-Set         |
+| [Trace Append]         | Non-Linear | $\Bbb{Z}$-Set, Trace                | Trace        |
+| [Untimed Trace Append] | Non-Linear | $\Bbb{Z}$-Set, Trace                | Trace        |
+| [Distinct Incremental] | Non-Linear | $\Bbb{Z}$-Set, Trace                | $\Bbb{Z}$-Set         |
 
 ## 2.9.1 Aggregate Operator
 
 Applies an aggregate to all elements of the input stream.
 
-This operator takes an [Indexed ZSet] as input, and applies an aggregate function over it, to return a [ZSet] that summarizes the values under each key, and associating a weight of `1` to each element. The resulting ZSet has no timestamps associated with any element.
+This operator takes an [Indexed $\Bbb{Z}$-Set] as input, and applies an aggregate function over it, to return a [$\Bbb{Z}$-Set] that summarizes the values under each key, and associating a weight of `1` to each element. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
 
 Implementations MAY support user defined aggregates, but MUST support the aggregate functions described in the [specification for the query language][PomoLogic Aggregates].
 
@@ -245,9 +245,9 @@ aggregate(count, [
 
 ## 2.9.2 Consolidate Operator
 
-Merges all deltas in the input trace into a [ZSet]. The resulting ZSet has no timestamps associated with any element, and sums the weights for each key-value pair. Elements with weight equal to zero are discarded.
+Merges all deltas in the input trace into a [$\Bbb{Z}$-Set]. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element, and sums the weights for each key-value pair. Elements with weight equal to zero are discarded.
 
-This operator is intended to combine deltas from across multiple timestamps into a single ZSet, and is used to export the results of a recursive subcircuit to the parent for further processing.
+This operator is intended to combine deltas from across multiple timestamps into a single $\Bbb{Z}$-Set, and is used to export the results of a recursive subcircuit to the parent for further processing.
 
 For example:
 
@@ -274,7 +274,7 @@ consolidate([
 
 ## 2.9.3 Distinct Operator
 
-Returns a ZSet containing elements in the input [ZSet] with positive weight, replacing their weight with `1`.
+Returns a $\Bbb{Z}$-Set containing elements in the input [$\Bbb{Z}$-Set] with positive weight, replacing their weight with `1`.
 
 For example:
 
@@ -292,7 +292,7 @@ distinct([
 
 ## 2.9.4 Filter Operator
 
-Filters a [ZSet] by a predicate. The predicate MUST be a pure function, returning a boolean.
+Filters a [$\Bbb{Z}$-Set] by a predicate. The predicate MUST be a pure function, returning a boolean.
 
 ```elixir
 predicate = fn x -> x >= 1 end
@@ -309,7 +309,7 @@ filter(predicate, [
 
 ## 2.9.5 Index With Operator
 
-Groups elements of a [ZSet] according to some key function, returning an [Indexed ZSet].
+Groups elements of a [$\Bbb{Z}$-Set] according to some key function, returning an [Indexed $\Bbb{Z}$-Set].
 
 For example:
 
@@ -329,7 +329,7 @@ index_with(key_function, [
 
 ## 2.9.6 Inspect Operator
 
-Applies a callback to a [ZSet], returning the original ZSet.
+Applies a callback to a [$\Bbb{Z}$-Set], returning the original $\Bbb{Z}$-Set.
 
 This operator is primarily intended as a debugging aid, and can be used to output the contents of streams at runtime.
 
@@ -349,7 +349,7 @@ inspect(inspect_fun, [
 
 ## 2.9.7 Map Operator
 
-Transforms elements of a [ZSet] according to some function. The predicate MUST be a pure function.
+Transforms elements of a [$\Bbb{Z}$-Set] according to some function. The predicate MUST be a pure function.
 
 For example:
 
@@ -368,7 +368,7 @@ filter(predicate, [
 
 ## 2.9.8 Negate Operator
 
-Negates the weights of each element in a [ZSet].
+Negates the weights of each element in a [$\Bbb{Z}$-Set].
 
 For example:
 
@@ -390,11 +390,11 @@ Returns the previous input [trace].
 
 ## 2.9.10 Z1 Operator
 
-Returns the previous input [ZSet].
+Returns the previous input [$\Bbb{Z}$-Set].
 
 ## 2.9.11 Distinct Trace Operator
 
-A variant of [Distinct] that offers more performance for incremental computation and computes across multiple timestamps, with support for use in nested contexts, like recursive circuits. It computes the distinct elements of a [ZSet] in its first argument, with respect to a [Trace] in its second, returning them in a new ZSet. The resulting ZSet has no timestamps associated with any element.
+A variant of [Distinct] that offers more performance for incremental computation and computes across multiple timestamps, with support for use in nested contexts, like recursive circuits. It computes the distinct elements of a [$\Bbb{Z}$-Set] in its first argument, with respect to a [Trace] in its second, returning them in a new $\Bbb{Z}$-Set. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
 
 Note that because operator computes the delta of [Distinct], it is possible for returned elements to have negative weights, if those elements are deleted between timestamps.
 
@@ -403,10 +403,10 @@ Distinct is not a linear operation, and requires access to the entire history of
 Consider evaluating the operator at some [timestamp] `t = (e, i)`, where `e` denotes the epoch, and `i` denotes the iteration.
 
 Then there are two possible classes of elements which may be returned:
-1) Elements in the current input ZSet
+1) Elements in the current input $\Bbb{Z}$-Set
 2) Elements that were returned in response to a previous input, at timestamp `(e, i0)`, such that `i0 < i`, and where the element was also returned at timestamp `(e0, i)`, such that `e0 < e`
 
-For each element, with weight `w`, meeting at least one of the above requirements, if that element does not appear in the trace, it is returned in the ZSet with weight 1. Otherwise, the following routine is performed:
+For each element, with weight `w`, meeting at least one of the above requirements, if that element does not appear in the trace, it is returned in the $\Bbb{Z}$-Set with weight 1. Otherwise, the following routine is performed:
 
 1) `w1` is computed, as the sum of all weights in which that element appears at times `(e0, i0)` for `e0 < e` and `i0 < i`
 2) `w2` is computed, as the sum of all weights in which that element appears at times `(e0, i)` for `e0 < e`
@@ -418,7 +418,7 @@ For each element, with weight `w`, meeting at least one of the above requirement
 5) `d1` is computed, such that:
    1) `d1 = 1`, if `w1 + w3 <= 0 && w1 + w2 + w3 + w > 0`
    2) `d1 = -1`, if `w1 + w3 > 0 && w1 + w3 + w4 <= 0`
-6) If `d1 - d0 != 0`, then the element is returned in the ZSet, with weight `d1 - d0`
+6) If `d1 - d0 != 0`, then the element is returned in the $\Bbb{Z}$-Set, with weight `d1 - d0`
 
 For example:
 
@@ -476,7 +476,7 @@ distinct_trace(b11, t11) => [
 
 ## 2.9.12 Join Stream Operator
 
-Joins two [Indexed ZSets] together. It applies a join function to values with matching keys, returning a [ZSet] containing the resulting elements, with no timestamps associated with those elements, and each element's weight given by the product of the two elements' weights that were joined together.
+Joins two [Indexed $\Bbb{Z}$-Sets] together. It applies a join function to values with matching keys, returning a [$\Bbb{Z}$-Set] containing the resulting elements, with no timestamps associated with those elements, and each element's weight given by the product of the two elements' weights that were joined together.
 
 For example:
 
@@ -507,9 +507,9 @@ join_stream(join_fun, a, b) => [
 
 ## 2.9.13 Join Trace Operator
 
-A variant of join that joins an [Indexed ZSet] with a [Trace]. This takes advantage of the bilinearity of relational joins in order to support incremental joins across timestamps.
+A variant of join that joins an [Indexed $\Bbb{Z}$-Set] with a [Trace]. This takes advantage of the bilinearity of relational joins in order to support incremental joins across timestamps.
 
-It returns a ZSet containing the resulting elements, with no timestamps associated with each of those elements, and each element's weight given by the product of the two elements' weights that were joined together.
+It returns a $\Bbb{Z}$-Set containing the resulting elements, with no timestamps associated with each of those elements, and each element's weight given by the product of the two elements' weights that were joined together.
 
 It behaves similarly to [Join Stream], and the first argument represents deltas for the current timestamp, with the second being a trace containing all updates observed thus far. In this way, an incremental join can be implemented as follows:
 
@@ -521,8 +521,8 @@ join_fun_flipped =
         join_fun(k, v2, v1)
     end
 
-a = ... # some ZSet
-b = ... # some ZSet
+a = ... # some $\Bbb{Z}$-Set
+b = ... # some $\Bbb{Z}$-Set
 
 a_trace = z1_trace(a)
 b_trace = z1_trace(b)
@@ -570,7 +570,7 @@ join_trace(join_fun, zset, trace) => [
 
 ## 2.9.14 Minus Operator
 
-Subtracts all weights for matching elements in two ZSets. Elements with combined weight equal to zero are discarded.
+Subtracts all weights for matching elements in two $\Bbb{Z}$-Sets. Elements with combined weight equal to zero are discarded.
 
 For example:
 
@@ -597,7 +597,7 @@ minus(a, b) => [
 
 ## 2.9.15 Plus Operator
 
-Adds all weights for matching keys in two ZSets. Elements with combined weight equal to zero are discarded.
+Adds all weights for matching keys in two $\Bbb{Z}$-Sets. Elements with combined weight equal to zero are discarded.
 
 For example:
 
@@ -624,19 +624,19 @@ plus(a, b) => [
 
 ## 2.9.16 Trace Append Operator
 
-Inserts the input ZSet into the input Trace, with the current timestamp.
+Inserts the input $\Bbb{Z}$-Set into the input Trace, with the current timestamp.
 
 ## 2.9.17 Untimed Trace Append Operator
 
-Inserts the input ZSet into the input Trace 
+Inserts the input $\Bbb{Z}$-Set into the input Trace 
 
 ## 2.9.18 Distinct Incremental Operator
 
-A variant of [Distinct] that offers more performance for incremental computation and computes across multiple timestamps. It computes the distinct elements of a [ZSet] in its first argument, with respect to a [Trace] in its second, returning them in a new ZSet. The resulting ZSet has no timestamps associated with any element.
+A variant of [Distinct] that offers more performance for incremental computation and computes across multiple timestamps. It computes the distinct elements of a [$\Bbb{Z}$-Set] in its first argument, with respect to a [Trace] in its second, returning them in a new $\Bbb{Z}$-Set. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
 
 Note that because operator computes the delta of [Distinct], it is possible for returned elements to have negative weights, if those elements are deleted between timestamps.
 
-This computation can be performed by returning the elements in the ZSet whose weight has the opposite sign as the sum of all matching weights in the Trace.
+This computation can be performed by returning the elements in the $\Bbb{Z}$-Set whose weight has the opposite sign as the sum of all matching weights in the Trace.
 
 For example:
 
@@ -689,7 +689,7 @@ The design presented here is based on ideas from [Differential Dataflow], and is
 [Fission Codes]: https://fission.codes
 [Import]: #284-import-node
 [Index With]: #295-indexwith-operator
-[Indexed ZSet]: #22-indexed-zset
+[Indexed $\Bbb{Z}$-Set]: #22-indexed-Bbbz-set
 [Inspect]: #296-inspect-operator
 [Join Stream]: #2912-joinstream-operator
 [Join Trace]: #2913-jointrace-operator
@@ -710,7 +710,7 @@ The design presented here is based on ideas from [Differential Dataflow], and is
 [Untimed Trace Append]: #2917-untimedtraceappend-operator
 [Z1 Trace]: #299-z1trace-operator
 [Z1]: #2910-z1-operator
-[ZSet]: #21-zset
+[$\Bbb{Z}$-Set]: #21-bbbz-set
 [dataflow]: https://en.wikipedia.org/wiki/Dataflow
 [nodes]: #28-node
 [operation]: #29-operator
