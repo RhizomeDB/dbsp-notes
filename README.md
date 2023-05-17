@@ -16,17 +16,23 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # Abstract
 
-This document describes PomoFlow, a dataflow runtime for PomoDB. This design is especially suited for incrementalizing programs to efficiently compute over deltas to the input EDB.
+This document describes PomoFlow, a [dataflow] query runtime for PomoDB. It is intended for incrementalizing programs to efficiently compute over deltas from an extensional database.
 
 # 1. Introduction
 
-Most relational query runtimes implement a variant of semi-naive evaluation, where queries are run over the course of multiple iterations, with each iteration refining the result toward a fixed point. Such designs can efficiently compute views over a fixed database, but are insufficient for incrementalizing evaluation over a database that changes over time.
+## 1.1 Motivation
 
-This document describes an alternative runtime, built on dataflow, which represents programs as circuits whose vertices and edges correspond to computations over streams of data. These circuits can be incrementalized to instead operate over deltas, with the results being combined back into a materialized view.
+Most relational query runtimes implement a variant of [semi-naive evaluation], where queries are iteratively refined until they reach a fixed point. Such designs can efficiently compute views over a fixed database, but are insufficient for incrementalizing evaluation over a database that changes over time. Since semi-naive evaluation requires evaluating the same data many times, it can be inefficient for many applications, especially when realtime operation is desired.
 
-The design is based on ideas from Differential Dataflow, and is heavily inspired by the Database Stream Processor Framework (DBSP). Links to both can be found in the [research repo][Pomo Research].
+## 1.2 A Dataflow Engine
+
+This document describes an alternative runtime based in the [dataflow] model. This represents programs as circuits (graphs) whose vertices and edges correspond to computation over streams of data. These circuits MAY be incrementalized to instead operate over deltas, with the results combined into a final materialized view.
+
+The design is based on ideas from [Differential Dataflow], and is heavily inspired by the [Database Stream Processor Framework (DBSP)][DBSP].
 
 # 2. Concepts
+
+The following describes the basic concepts and data types of PomoFlow:
 
 ## 2.1 ZSet
 
@@ -42,7 +48,7 @@ ZSets can be written as lists of triples:
 ]
 ```
 
-Implementations should support efficient sequential access of a ZSet, first by element, and then by timestamp.
+Implementations SHOULD support efficient sequential access of a ZSet, first by element, and then by timestamp.
 
 Some operations return ZSets without timestamp information, and implementations MAY specialize a variant of the data structure for those cases.
 
@@ -50,7 +56,7 @@ Some operations return ZSets without timestamp information, and implementations 
 
 A set of key-value pairs, each associated with a [weight] and [timestamp].
 
-Indexed ZSets can be written as lists of triples:
+Indexed ZSets MAY be written as lists of triples:
 
 ```
 [
@@ -60,7 +66,11 @@ Indexed ZSets can be written as lists of triples:
 ]
 ```
 
-Implementations should support efficient sequential access of an Indexed ZSet, first by key, and then by value, and lastly by timestamp.
+Implementations SHOULD support efficient sequential access of an Indexed ZSet in the following order:
+
+1. By key
+2. By value
+3. By timestamp.
 
 Some operations return Indexed ZSets without timestamp information, and implementations MAY specialize a variant of the data structure for those cases.
 
@@ -68,7 +78,7 @@ Some operations return Indexed ZSets without timestamp information, and implemen
 
 A collection of deltas, combining multiple ZSets or Indexed ZSets.
 
-Traces can be written as lists of 4-tuples:
+Traces MAY be written as lists of 4-tuples:
 
 ```
 [
@@ -78,29 +88,44 @@ Traces can be written as lists of 4-tuples:
 ]
 ```
 
-Indexed ZSets should be merged into a trace using the key, value, timestamp, and weight associated with each element. ZSets should be merged into the trace by treating the element itself as a key, and associating no value with the delta.
+Indexed ZSets SHOULD be merged into a trace using the key, value, timestamp, and weight associated with each element.
+
+ZSets SHOULD be merged into the trace by treating the element itself as a key, and associating no value with the delta.
 
 Implementations MUST support efficient sequential access of traces, first by key, and then by value, and lastly by timestamp.
 
 ## 2.4 Weight
 
-An integer associated with each element of a ZSet. Positive weights indicate the number of derivations of that element within the ZSet, and negative weights indicate the number of deletions of that element.
+Weights describe the number of downstream dependency count for a [ZSet]. It MUST be represented by an integer, and MAY be either positive or negative.
 
-## 2.5 Time
+Positive weights indicate the number of derivations of that element within the ZSet. Negative weights indicate the number of deletions of that element.
 
-PomoFlow represents [timestamp]s for the root circuit using a counter which denotes the current epoch.
+## 2.6 Time
 
-Every recursive subcircuit refines its parent's timestamp using a pair which further associates that timestamp with the iteration count through the subcircuit. These pairs are ordered using product order.
+Dataflow engines require a concept of ordering. Each node in the circuit MUST be labelled with an incrementing integer, called its "epoch". PomoFlow represents [timestamp]s for the root circuit using a counter which denotes the current epoch.
+
+Every recursive subcircuit MUST refine its parent's timestamp. This is signalled via a pair which associates the timestamp with the iteration count through the subcircuit. These pairs MUST use product order.
 
 Implementations MUST represent both epochs and iteration counts as an unsigned integer.
 
 For example, a root circuit may progress through the following timestamps:
 
-```
-[0, 1, 2, 3, ...]
-```
+$\langle 0, 1, 2, 3, \dots, n \rangle$
 
 Whereas a subcircuit under that root may progress through these:
+
+$$
+/langle 
+  (0, 0)
+  (0, 0),
+  (0, 1),
+  (0, 2),
+  (1, 0),
+  (1, 1),
+  (1, 2),
+  \dots
+/rangle
+$$
 
 ```
 [
@@ -645,6 +670,8 @@ distinct(batch, [
 [Brooklyn Zelenka]: https://github.com/expede
 [Child]: #282-child-node
 [Consolidate]: #292-consolidate-operator
+[DBSP]: https://arxiv.org/abs/2203.16684
+[Differential Dataflow]: https://www.cidrdb.org/cidr2013/Papers/CIDR13_Paper111.pdf
 [Distinct Incremental]: #2918-distinctincremental-operator
 [Distinct Trace]: #2911-distincttrace-operator
 [Distinct]: #293-distinct-operator
@@ -674,8 +701,10 @@ distinct(batch, [
 [Z1 Trace]: #299-z1trace-operator
 [Z1]: #2910-z1-operator
 [ZSet]: #21-zset
+[dataflow]: https://en.wikipedia.org/wiki/Dataflow
 [nodes]: #28-node
 [operation]: #29-operator
+[semi-naive evaluation]: https://pages.cs.wisc.edu/~paris/cs784-s21/lectures/lecture9.pdf
 [streams]: #27-stream
 [timestamp]: #25-time
 [trace]: #23-trace
