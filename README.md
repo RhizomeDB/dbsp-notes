@@ -115,15 +115,15 @@ $\langle 0, 1, 2, 3, \dots, n \rangle$
 Whereas a subcircuit under that root may progress through these:
 
 $$
-\langle\n
-  (0, 0),\n
-  (0, 0),\n
-  (0, 1),\n
-  (0, 2),\n
-  (1, 0),\n
-  (1, 1),\n
-  (1, 2),\n
-  \dots\n
+\langle\\
+  (0, 0),\\
+  (0, 0),\\
+  (0, 1),\\
+  (0, 2),\\
+  (1, 0),\\
+  (1, 1),\\
+  (1, 2),\\
+  \dots\\
 \rangle
 $$
 
