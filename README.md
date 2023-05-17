@@ -16,7 +16,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # Abstract
 
-This document describes PomoFlow, a [dataflow] query runtime for PomoDB. It is intended for incrementalizing programs to efficiently compute over deltas from an extensional database.
+This document describes PomoFlow, a [dataflow] query runtime. It is intended for incrementalizing programs to efficiently compute over deltas from an extensional database.
 
 # 1. Introduction
 
@@ -115,7 +115,7 @@ $\langle 0, 1, 2, 3, \dots, n \rangle$
 Whereas a subcircuit under that root may progress through these:
 
 $$
-/langle 
+\langle 
   (0, 0)
   (0, 0),
   (0, 1),
@@ -124,7 +124,7 @@ $$
   (1, 1),
   (1, 2),
   \dots
-/rangle
+\rangle
 $$
 
 ```
