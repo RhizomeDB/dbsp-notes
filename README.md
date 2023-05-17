@@ -40,6 +40,12 @@ The following describes the basic concepts and data types of PomoFlow:
 
 A set of triples, each associated with a [weight] and [timestamp]: `{element, timestamp, weight}`.
 
+| Index | Name      | Description                                              |
+|-------|-----------|----------------------------------------------------------|
+| 0     | Element   | The actual data being processed                          |
+| 1     | Timestamp | Information about processing order                       |
+| 2     | Weight    | How many dependencies (or deletions) its responsible for |
+
 $\Bbb{Z}$-Sets MAY be written as lists of triples:
 
 ```elixir
@@ -110,7 +116,7 @@ Every recursive subcircuit MUST refine its parent's timestamp. This is signalled
 
 ### 2.6.1 Product Order
 
-Under this example, using product order, `(0, 0) <= (0, 1) <= (1, 1)`, but neither `(0, 2) <= (1, 1)` or `(1, 1) <= (2, 0)` are directly comparable.
+Under this example, using product order, `(0, 0) <= (0, 1) <= (1, 1)`, but neither `(0, 2) <= (1, 1)` nor `(1, 1) <= (2, 0)` are directly comparable.
 
 ### 2.6.2 Example
 
@@ -136,15 +142,13 @@ Whereas a subcircuit under that root may progress through these:
 
 ## 2.6 Circuit
 
-A circuit is an embedding of a [PomoRA] query plan into a directed graph whose vertices, called [nodes], represent computation against [streams], and whose edges describe those streams.
+A circuit is an embedding of a [PomoRA] query plan into a directed (potentially cyclic) graph whose vertices ([nodes]) represent computation over [streams], and whose edges describe those streams.
 
-Circuits may contain subcircuits, representing recursive subcomputations that evaluate to a fixed point every iteration.
-
-Each iteration, a circuit is evaluated by evaluating its nodes in topological order, until each has reached a fixed point.
+Circuits MAY contain subcircuits, which MUST represent recursive subcomputations that evaluate to a fixed point every iteration. For each iteration, a circuit is run by evaluating its nodes (subcircuits and single nodes) in some topologically sorted order, until a fixed point is reached.
 
 ## 2.7 Stream
 
-A stream is an infinite sequence of values, each associated with subsequent timestamps. It is RECOMMENDED that streams not be reified directly, and they MAY instead be modeled as a cell containing the singular value in the stream at the current timestamp.
+A stream is an infinite sequence of values, each associated with subsequent timestamps. It is RECOMMENDED that streams not be reified directly, and they MAY instead be modeled as cells containing the element field in the stream at the current timestamp.
 
 The edges between nodes in a circuit describe streams of values flowing from the output of one node to the input of another, and these edges SHOULD be defined in terms of the IDs of the nodes they connect.
 
@@ -521,8 +525,8 @@ join_fun_flipped =
         join_fun(k, v2, v1)
     end
 
-a = ... # some $\Bbb{Z}$-Set
-b = ... # some $\Bbb{Z}$-Set
+a = ... # some Z-Set
+b = ... # some Z-Set
 
 a_trace = z1_trace(a)
 b_trace = z1_trace(b)
@@ -538,10 +542,7 @@ Where `z1_trace(x)` denotes an application of the [Z1 Trace] operator, `join_fun
 For example:
 
 ```elixir
-join_fun =
-    fn key, v1, v2 ->
-        {key, {v1, v2}}
-    end
+join_fun = fn key, v1, v2 -> {key, {v1, v2}} end
 
 zset = [
     {{:a, 0}, 0, 1},
