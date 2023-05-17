@@ -416,8 +416,8 @@ For each element, with weight $w$, meeting at least one of the above requirement
 2) $w_2$ is computed, as the sum of all weights in which that element appears at times $\langle e_0, i \rangle$ for $e_0 < e$
 3) $w_3$ is computed, as the sum of all weights in which that element appears at times $\langle e, i_0 \rangle$ for $i_0 < i$
 4) $d_0$ is computed, such that:
-   1) $d_0 = 1$, if $w_1 \le \land w1 + w2 > 0$
-   2) $d_0 = -1$, if $w_1 > 0 \land w1 + w2 \le 0$
+   1) $d_0 = 1$, if $w_1 \le \land w_1 + w_2 > 0$
+   2) $d_0 = -1$, if $w_1 > 0 \land w_1 + w_2 \le 0$
    3) $d_0 = 0$, otherwise
 5) $d_1$ is computed, such that:
    1) $d_1 = 1$, if $w_1 + w_3 \le 0 \land w_1 + w_2 + w_3 + w > 0$
