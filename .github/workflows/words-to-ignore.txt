@@ -82,6 +82,7 @@ incrementalized
 incrementalizing
 inlined
 interpretable
+iteratively
 multicodec
 multiformat
 multihash

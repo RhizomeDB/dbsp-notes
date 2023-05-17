@@ -26,7 +26,7 @@ This document describes PomoFlow, a [dataflow] query runtime. It is intended for
 
 ## 1.1 Motivation
 
-Most relational query runtimes implement a variant of [semi-naive evaluation], where queries are iteratively refined until they reach a fixed point. Such designs can efficiently compute views over a fixed database, but are insufficient for incrementalizing evaluation over a database that changes over time. Since semi-naive evaluation requires evaluating the same data many times, it can be inefficient for many applications, especially when realtime operation is desired.
+Most relational query runtimes implement a variant of [semi-naive evaluation], where queries are iteratively refined until they reach a fixed point. Such designs can efficiently compute views over a fixed database, but are insufficient for incrementalizing evaluation over a database that changes over time. Since semi-naive evaluation requires evaluating the same data many times, it can be inefficient for many applications, especially when real time operation is desired.
 
 ## 1.2 A Dataflow Engine
 
@@ -42,7 +42,7 @@ A set of elements, each associated with a [weight] and [timestamp].
 
 ZSets can be written as lists of triples:
 
-```elixir
+```
 [
     {element1, timestamp1, weight1},
     {element2, timestamp2, weight2},
@@ -104,7 +104,7 @@ Positive weights indicate the number of derivations of that element within the Z
 
 ## 2.6 Time
 
-Dataflow engines require a concept of ordering. Each node in the circuit MUST be labelled with an incrementing integer, called its "epoch". PomoFlow represents [timestamp]s for the root circuit using a counter which denotes the current epoch.
+Dataflow engines require a concept of ordering. Each node in the circuit MUST be labeled with an incrementing integer, called its "epoch". PomoFlow represents [timestamp]s for the root circuit using a counter which denotes the current epoch.
 
 Every recursive subcircuit MUST refine its parent's timestamp. This is signalled via a pair which associates the timestamp with the iteration count through the subcircuit. The pairs MUST be given in the following order: `{epoch, iteration}`. Both values MUST be given as unsigned integers. They form a [partial order], and MUST use [product order] for comparison.
 
