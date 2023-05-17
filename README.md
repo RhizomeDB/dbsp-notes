@@ -404,25 +404,25 @@ Note that because operator computes the delta of [Distinct], it is possible for 
 
 Distinct is not a linear operation, and requires access to the entire history of updates, however there's a few observations that can reduce the search space of timestamps to examine.
 
-Consider evaluating the operator at some [timestamp] $t \eq \langle e, i \rangle$, where $e$ denotes the epoch, and $i$ denotes the iteration.
+Consider evaluating the operator at some [timestamp] $t = \langle e, i \rangle$, where $e$ denotes the epoch, and $i$ denotes the iteration.
 
 Then there are two possible classes of elements which may be returned:
 1) Elements in the current input $\Bbb{Z}$-Set
-2) Elements that were returned in response to a previous input, at timestamp $\langle e, i_0 \rangle$, such that $i_0 \lt i$, and where the element was also returned at timestamp $\langle e_0, i \rangle$, such that $e_0 \lt e$.
+2) Elements that were returned in response to a previous input, at timestamp $\langle e, i_0 \rangle$, such that $i_0 < i$, and where the element was also returned at timestamp $\langle e_0, i \rangle$, such that $e_0 < e$.
 
 For each element, with weight $w$, meeting at least one of the above requirements, if that element does not appear in the trace, it is returned in the $\Bbb{Z}$-Set with weight 1. Otherwise, the following routine is performed:
 
-1) $w_1$ is computed, as the sum of all weights in which that element appears at times `(e0, i0)` for `e0 < e` and `i0 < i`
-2) `w2` is computed, as the sum of all weights in which that element appears at times `(e0, i)` for `e0 < e`
-3) `w3` is computed, as the sum of all weights in which that element appears at times `(e, i0)` for `i0 < i`
-4) `d0` is computed, such that:
-   1) `d0 = 1`, if `w1 <= = && w1 + w2 > 0`
-   2) `d0 = -1`, if `w1 > 0 && w1 + w2 <= 0`
-   3) `d0 = 0`, otherwise
-5) `d1` is computed, such that:
-   1) `d1 = 1`, if `w1 + w3 <= 0 && w1 + w2 + w3 + w > 0`
-   2) `d1 = -1`, if `w1 + w3 > 0 && w1 + w3 + w4 <= 0`
-6) If `d1 - d0 != 0`, then the element is returned in the $\Bbb{Z}$-Set, with weight `d1 - d0`
+1) $w_1$ is computed, as the sum of all weights in which that element appears at times $\langle e_0, i_0 \rangle$ for $e_0 < e$ and $i_0 < i$
+2) $w_2$ is computed, as the sum of all weights in which that element appears at times $\langle e_0, i \rangle$ for $e_0 < e$
+3) $w_3$ is computed, as the sum of all weights in which that element appears at times $\langle e, i_0 \rangle$ for $i_0 < i$
+4) $d_0$ is computed, such that:
+   1) $d_0 = 1$, if $w_1 \le = \and w1 + w2 > 0$
+   2) $d_0 = -1$, if $w_1 > 0 \and w1 + w2 \le 0$
+   3) $d_0 = 0$, otherwise
+5) $d_1$ is computed, such that:
+   1) $d_1 = 1$, if $w_1 + w_3 le 0 \and w_1 + w_2 + w_3 + w > 0$
+   2) $d_1 = -1$, if $w_1 + w_3 > 0 \and w_1 + w_3 + w_4 \le 0$
+6) If $d_1 - d_0 \ne 0$, then the element is returned in the $\Bbb{Z}$-Set, with weight $d_1 - d_0$
 
 For example:
 
@@ -480,7 +480,7 @@ distinct_trace(b11, t11) => [
 
 ## 2.9.12 Join Stream Operator
 
-Joins two [Indexed $\Bbb{Z}$-Sets] together. It applies a join function to values with matching keys, returning a [Z-Set] containing the resulting elements, with no timestamps associated with those elements, and each element's weight given by the product of the two elements' weights that were joined together.
+The join stream operator merges two [Indexed $\Bbb{Z}$-Sets] together. It applies a join function to values with matching keys, returning a [Z-Set] containing the resulting elements, with no timestamps associated with those elements, and each element's weight given by the product of the two elements' weights that were joined.
 
 For example:
 
@@ -511,11 +511,11 @@ join_stream(join_fun, a, b) => [
 
 ## 2.9.13 Join Trace Operator
 
-A variant of join that joins an [Indexed Z-Set] with a [Trace]. This takes advantage of the bilinearity of relational joins in order to support incremental joins across timestamps.
+The join trace operator is a variant of an [Indexed Z-Set] join with a [Trace]. This takes advantage of the [bilinear]ity of relational joins in order to support incremental joins across timestamps.
 
-It returns a $\Bbb{Z}$-Set containing the resulting elements, with no timestamps associated with each of those elements, and each element's weight given by the product of the two elements' weights that were joined together.
+This operator MUST return a $\Bbb{Z}$-Set containing the resulting elements. It MUST NOT include the timestamps associated with each of those elements. Each element's weight MUST be given by the product of the two elements' weights that were joined together.
 
-It behaves similarly to [Join Stream], and the first argument represents deltas for the current timestamp, with the second being a trace containing all updates observed thus far. In this way, an incremental join can be implemented as follows:
+Join trace behaves similarly to [Join Stream]. The first argument MUST represent deltas for the current timestamp. The second argument MUST be a trace containing all updates observed thus far. In this way, an incremental join MAY be implemented as follows:
 
 ```elixir
 join_fun = ...
@@ -571,7 +571,7 @@ join_trace(join_fun, zset, trace) => [
 
 ## 2.9.14 Minus Operator
 
-Subtracts all weights for matching elements in two $\Bbb{Z}$-Sets. Elements with combined weight equal to zero are discarded.
+The minus operator MUST subtract all weights for matching elements in two $\Bbb{Z}$-Sets. Elements with combined weight equal to zero  MUST be discarded.
 
 For example:
 
@@ -700,18 +700,19 @@ The design presented here is based on ideas from [Differential Dataflow], and is
 [Operator]: #281-operator-node
 [Plus Operator]: #2915-plus-operator
 [Plus]: #2915-minus-operator
-[PomoRA]: https://github.com/RhizomeDB/PomoRA
 [Pomo Research]: https://github.com/RhizomeDB/research
 [PomoLogic Aggregates]: https://github.com/RhizomeDB/PomoLogic#253-aggregation
+[PomoRA]: https://github.com/RhizomeDB/PomoRA
 [Quinn Wilton]: https://github.com/QuinnWilton
 [RFC 2119]: https://datatracker.ietf.org/doc/html/rfc2119
 [Sink]: #285-sink-node
 [Source]: #286-source-node
 [Trace Append]: #2916-traceappend-operator
 [Untimed Trace Append]: #2917-untimedtraceappend-operator
+[Z-Set]: #21-bbbz-set
 [Z1 Trace]: #299-z1trace-operator
 [Z1]: #2910-z1-operator
-[Z-Set]: #21-bbbz-set
+[bilinear]: https://en.wikipedia.org/wiki/Bilinear_form
 [dataflow]: https://en.wikipedia.org/wiki/Dataflow
 [nodes]: #28-node
 [operation]: #29-operator
