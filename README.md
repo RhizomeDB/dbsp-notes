@@ -196,8 +196,8 @@ An operator specifies an operation against a stream, and is represented by a nod
 | [Inspect]              | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
 | [Map]                  | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
 | [Negate]               | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
-| [$z^{-1}$ Trace]           | Linear     | Trace                                        | Trace                 |
-| [z^-1]                 | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
+| [𝓏⁻¹ Trace]            | Linear     | Trace                                        | Trace                 |
+| [𝓏⁻¹]                  | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
 | [Distinct Trace]       | Non-Linear | $\Bbb{Z}$-Set, Trace                         | $\Bbb{Z}$-Set         |
 | [Join Stream]          | Linear     | Indexed $\Bbb{Z}$-Set, Indexed $\Bbb{Z}$-Set | $\Bbb{Z}$-Set         |
 | [Join Trace]           | Bilinear   | Indexed $\Bbb{Z}$-Set, Trace                 | $\Bbb{Z}$-Set         |
