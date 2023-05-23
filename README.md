@@ -85,7 +85,7 @@ Implementations MUST support efficient sequential access of traces, first by key
 
 ## 2.4 Weight
 
-Weights describe the number of downstream dependency count for a [Z-Set]. It MUST be represented by an integer, and MAY be either positive or negative.
+Weights describe the number of downstream dependency count for a [𝕫-Set]. It MUST be represented by an integer, and MAY be either positive or negative.
 
 Positive weights indicate the number of derivations of that element within the $\Bbb{Z}$-Set. Negative weights indicate the number of deletions of that element.
 
@@ -209,7 +209,7 @@ An operator specifies an operation against a stream, and is represented by a nod
 
 ## 2.9.1 Aggregate Operator
 
-The aggregate operatortakes an [Indexed Z-Set] as input, and applies an aggregate function over it, to return a [Z-Set] that summarizes the values under each key, and associating a weight of `1` to each element. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
+The aggregate operatortakes an [Indexed Z-Set] as input, and applies an aggregate function over it, to return a [𝕫-Set] that summarizes the values under each key, and associating a weight of `1` to each element. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
 
 Implementations MAY support user defined aggregates, but MUST support the aggregate functions described in the [specification for the query language][PomoLogic Aggregates].
 
@@ -230,7 +230,7 @@ aggregate(count, [
 
 ## 2.9.2 Consolidate Operator
 
-Consolidation operators merge all deltas in the input trace into a [Z-Set]. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element, and sums the weights for each key-value pair. Elements with weight equal to zero are discarded.
+Consolidation operators merge all deltas in the input trace into a [𝕫-Set]. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element, and sums the weights for each key-value pair. Elements with weight equal to zero are discarded.
 
 This operator is intended to combine deltas from across multiple timestamps into a single $\Bbb{Z}$-Set, and is used to export the results of a recursive subcircuit to the parent for further processing.
 
@@ -259,7 +259,7 @@ consolidate([
 
 ## 2.9.3 Distinct Operator
 
-Returns a $\Bbb{Z}$-Set containing elements in the input [Z-Set] with positive weight, replacing their weight with `1`.
+Returns a $\Bbb{Z}$-Set containing elements in the input [𝕫-Set] with positive weight, replacing their weight with `1`.
 
 For example:
 
@@ -277,7 +277,7 @@ distinct([
 
 ## 2.9.4 Filter Operator
 
-Filters a [Z-Set] by a predicate. The predicate MUST be a pure function, returning a boolean.
+Filters a [𝕫-Set] by a predicate. The predicate MUST be a pure function, returning a boolean.
 
 ```elixir
 is_positive = fn x -> x >= 1 end
@@ -294,7 +294,7 @@ filter(is_positive, [
 
 ## 2.9.5 Index With Operator
 
-Indexing operators group elements of a [Z-Set] according to some key function, returning an [Indexed Z-Set].
+Indexing operators group elements of a [𝕫-Set] according to some key function, returning an [Indexed Z-Set].
 
 For example:
 
@@ -314,7 +314,7 @@ index_with(key_function, [
 
 ## 2.9.6 Inspect Operator
 
-The inspect operator applies a callback to a [Z-Set], and returns the original $\Bbb{Z}$-Set.
+The inspect operator applies a callback to a [𝕫-Set], and returns the original $\Bbb{Z}$-Set.
 
 This operator is primarily intended as a debugging aid, and can be used to output the contents of streams at runtime.
 
@@ -334,7 +334,7 @@ inspect(inspect_fun, [
 
 ## 2.9.7 Map Operator
 
-The map operator transforms elements of a [Z-Set] according to some function. The predicate MUST be a pure function.
+The map operator transforms elements of a [𝕫-Set] according to some function. The predicate MUST be a pure function.
 
 For example:
 
@@ -353,7 +353,7 @@ filter(is_positive, [
 
 ## 2.9.8 Negate Operator
 
-The negate operator flips the sign on the weight of each element in a [Z-Set].
+The negate operator flips the sign on the weight of each element in a [𝕫-Set].
 
 For example:
 
@@ -375,11 +375,11 @@ The trace operator returns the previous input [trace].
 
 ## 2.9.10 $z^{-1}$ Operator
 
-The $z^{-1}$ operator returns the previous input [Z-Set].
+The $z^{-1}$ operator returns the previous input [𝕫-Set].
 
 ## 2.9.11 Distinct Trace Operator
 
-Distinct trace ia a variant of [Distinct] that offers more performance for incremental computation and computes across multiple timestamps, with support for use in nested contexts, like recursive circuits. It computes the distinct elements of a [Z-Set] in its first argument, with respect to a [Trace] in its second, returning them in a new $\Bbb{Z}$-Set. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
+Distinct trace ia a variant of [Distinct] that offers more performance for incremental computation and computes across multiple timestamps, with support for use in nested contexts, like recursive circuits. It computes the distinct elements of a [𝕫-Set] in its first argument, with respect to a [Trace] in its second, returning them in a new $\Bbb{Z}$-Set. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
 
 Note that because operator computes the delta of [Distinct], it is possible for returned elements to have negative weights, if those elements are deleted between timestamps.
 
@@ -461,7 +461,7 @@ distinct_trace(b11, t11) => [
 
 ## 2.9.12 Join Stream Operator
 
-The join stream operator MUST merge two [Indexed $\Bbb{Z}$-Sets]. It MUST apply a join function to values with matching keys, returning a [Z-Set] containing the resulting elements. There MUST be no timestamps associated with the return elements, and each output element's weight MUST be given by the product of the two elements' weights that were joined.
+The join stream operator MUST merge two [Indexed $\Bbb{Z}$-Sets]. It MUST apply a join function to values with matching keys, returning a [𝕫-Set] containing the resulting elements. There MUST be no timestamps associated with the return elements, and each output element's weight MUST be given by the product of the two elements' weights that were joined.
 
 For example:
 
@@ -515,7 +515,7 @@ incremental_join(join_fun, a, b) =
     join_trace(join_fun_flipped, b, a_trace)
 ```
 
-Where `z1_trace(x)` denotes an application of the [Z1 Trace] operator, `join_fun_flipped` flips the value arguments of `join_fun`, and `+` denotes the [Plus Operator].
+Where `z1_trace(x)` denotes an application of the [𝓏⁻¹ Trace] operator, `join_fun_flipped` flips the value arguments of `join_fun`, and `+` denotes the [Plus Operator].
 
 For example:
 
@@ -611,7 +611,7 @@ Inserts the input $\Bbb{Z}$-Set into the input Trace
 
 ## 2.9.18 Distinct Incremental Operator
 
-A variant of [Distinct] that offers more performance for incremental computation and computes across multiple timestamps. It computes the distinct elements of a [Z-Set] in its first argument, with respect to a [Trace] in its second, returning them in a new $\Bbb{Z}$-Set. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
+A variant of [Distinct] that offers more performance for incremental computation and computes across multiple timestamps. It computes the distinct elements of a [𝕫-Set] in its first argument, with respect to a [Trace] in its second, returning them in a new $\Bbb{Z}$-Set. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
 
 Note that because operator computes the delta of [Distinct], it is possible for returned elements to have negative weights, if those elements are deleted between timestamps.
 
@@ -687,9 +687,6 @@ The design presented here is based on ideas from [Differential Dataflow], and is
 [Source]: #286-source-node
 [Trace Append]: #2916-traceappend-operator
 [Untimed Trace Append]: #2917-untimedtraceappend-operator
-[Z-Set]: #21-bbbz-set
-[$z^{-1}$ Trace]: #299-z1trace-operator
-[Z1]: #2910-z1-operator
 [bilinear]: https://en.wikipedia.org/wiki/Bilinear_form
 [dataflow]: https://en.wikipedia.org/wiki/Dataflow
 [nodes]: #28-node
@@ -701,3 +698,6 @@ The design presented here is based on ideas from [Differential Dataflow], and is
 [timestamp]: #25-time
 [trace]: #23-trace
 [weight]: #24-weight
+[𝓏⁻¹ Trace]: #299-z1trace-operator
+[𝓏⁻¹]: #2910-z1-operator
+[𝕫-Set]: #21-bbbz-set
