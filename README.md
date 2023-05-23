@@ -698,6 +698,6 @@ The design presented here is based on ideas from [Differential Dataflow], and is
 [timestamp]: #25-time
 [trace]: #23-trace
 [weight]: #24-weight
-[𝓏⁻¹ Trace]: #299-z1trace-operator
-[𝓏⁻¹]: #299-operator
+[𝓏⁻¹ Trace]: #299-z-1-trace-operator
+[𝓏⁻¹]: #2910-z-1-operator
 [𝕫-Set]: #21-bbbz-set
