@@ -1,9 +1,5 @@
 # Notes on DBSP
-## An Incremental Query Engine
-
-# Dependencies
-
-- [PomoRA]
+## Incrementalizing Queries
 
 # 1. Introduction
 
@@ -647,10 +643,6 @@ distinct(batch, [
     {2, nil, 1}
 ]
 ```
-
-# 3 Prior Art
-
-The design presented here is based on ideas from [Differential Dataflow], and is heavily inspired by the [Database Stream Processor Framework (DBSP)][DBSP].
 
 <!-- Links -->
 
