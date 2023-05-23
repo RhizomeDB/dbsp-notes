@@ -688,7 +688,7 @@ The design presented here is based on ideas from [Differential Dataflow], and is
 [Trace Append]: #2916-traceappend-operator
 [Untimed Trace Append]: #2917-untimedtraceappend-operator
 [Z-Set]: #21-bbbz-set
-[Z1 Trace]: #299-z1trace-operator
+[$z^{-1}$ Trace]: #299-z1trace-operator
 [Z1]: #2910-z1-operator
 [bilinear]: https://en.wikipedia.org/wiki/Bilinear_form
 [dataflow]: https://en.wikipedia.org/wiki/Dataflow
