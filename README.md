@@ -196,8 +196,8 @@ An operator specifies an operation against a stream, and is represented by a nod
 | [Inspect]              | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
 | [Map]                  | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
 | [Negate]               | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
-| [Z1 Trace]             | Linear     | Trace                                        | Trace                 |
-| [Z1]                   | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
+| [$z^{-1}$ Trace]           | Linear     | Trace                                        | Trace                 |
+| [z^-1]                 | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
 | [Distinct Trace]       | Non-Linear | $\Bbb{Z}$-Set, Trace                         | $\Bbb{Z}$-Set         |
 | [Join Stream]          | Linear     | Indexed $\Bbb{Z}$-Set, Indexed $\Bbb{Z}$-Set | $\Bbb{Z}$-Set         |
 | [Join Trace]           | Bilinear   | Indexed $\Bbb{Z}$-Set, Trace                 | $\Bbb{Z}$-Set         |
@@ -369,13 +369,13 @@ negate([
 ]
 ```
 
-## 2.9.9 Z1 Trace Operator
+## 2.9.9 $z^{-1}$ Trace Operator
 
 The trace operator returns the previous input [trace].
 
-## 2.9.10 Z1 Operator
+## 2.9.10 $z^{-1}$ Operator
 
-The Z1 operator returns the previous input [Z-Set].
+The $z^{-1}$ operator returns the previous input [Z-Set].
 
 ## 2.9.11 Distinct Trace Operator
 
