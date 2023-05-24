@@ -125,7 +125,7 @@ Circuits MAY contain subcircuits, which MUST represent recursive subcomputations
 
 ## 2.7 Stream
 
-A stream is an infinite sequence of values, each associated with subsequent timestamps. It is RECOMMENDED that streams not be reified directly, and they MAY instead be modeled as cells containing the element field in the stream at the current timestamp.
+A stream is an infinite sequence of values. A node processing a stream progresses one tuple at a time, and increments its counter after every tuple. It is RECOMMENDED that streams not be reified directly, and they MAY instead be modeled as cells containing the element field in the stream at the current timestamp.
 
 The edges between nodes in a circuit describe streams of values flowing from the output of one node to the input of another. It is RECOMMENDED that these edges be defined in terms of the IDs of the nodes they connect.
 
