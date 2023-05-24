@@ -11,7 +11,7 @@ This document describes an alternative runtime based in the [dataflow] model. Th
 
 # 2. Concepts
 
-The following describes the basic concepts and data types of PomoFlow:
+The following describes the basic concepts and data types:
 
 ## 2.1 $\Bbb{Z}$-Set
 
@@ -87,7 +87,7 @@ Positive weights indicate the number of derivations of that element within the $
 
 ## 2.6 Time
 
-Dataflow engines require a concept of ordering. Each node in the circuit MUST be labeled with an incrementing integer, called its "epoch". PomoFlow represents [timestamp]s for the root circuit using a counter which denotes the current epoch.
+Dataflow engines require a concept of ordering. Each node in the circuit MUST be labeled with an incrementing integer that represents the number of times that it has gone through that subcircuit. [DBSP] represents [timestamp]s for the root circuit using a counter which denotes the current epoch.
 
 Every recursive subcircuit MUST refine its parent's timestamp. This is signalled via a pair which associates the timestamp with the iteration count through the subcircuit. The pairs MUST be given in the following order: `{epoch, iteration}`. Both values MUST be given as unsigned integers. They form a [partial order], and MUST use [product order] for comparison.
 
