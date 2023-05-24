@@ -3,7 +3,7 @@
 
 # 1. Introduction
 
-Most datalog query runtimes implement a variant of [semi-naive evaluation], where queries are iteratively refined until they reach a fixed point. Such designs can efficiently compute views over a fixed database, but are insufficient for incrementalizing evaluation over a database that changes over time. Since semi-naive evaluation requires evaluating the same data many times, it can be inefficient for many applications, especially when real time operation is desired.
+Most datalog query runtimes implement a variant of [semi-naive evaluation], where queries are iteratively refined until they reach a fixed point. Such designs can efficiently compute views over a fixed database, but are insufficient for incrementalizing evaluation over a database that changes over time. Since semi-naive evaluation of nonmonotonic queries requires evaluation on changes to the input, it can be inefficient for many applications, especially when real time operation is desired.
 
 This document describes an alternative runtime based in the [dataflow] model. This represents programs as circuits (graphs) whose vertices and edges correspond to computation over streams of data. These circuits MAY be incrementalized to instead operate over deltas, with the results combined into a final materialized view. Converting from relation algebra to dataflow is a fully mechanical, static transformation. 
 
@@ -454,6 +454,87 @@ distinct_trace(b11, t11) => [
     {5, nil, -1}
 ]
 ```
+
+<details>
+<summary>A more complete Elixir example</summary>
+
+``` elixir
+# Sum of weights where epoch(t) < epoch(time) and iteration(t) < iteration(time)
+w1 = 0
+
+# Sum of weights where epoch(t) < epoch(time) and iteration(t) == iteration(time)
+w2 = 0
+
+# Sum of weights where epoch(t) == epoch(time) and iteration(t) < iteration(time)
+w3 = 0
+
+{trace_cursor, times} = ZSetTraceCursor.times(trace_cursor)
+
+{w1, w2, w3, next_time} =
+  Enum.reduce(times, {w1, w2, w3, nil}, fn
+    {{t_epoch, t_iteration} = t, w}, {w1, w2, w3, next_time} ->
+      cond do
+        t_epoch == epoch ->
+          if Algebra.PartialOrder.less_than(t_iteration, iteration) do
+            {w1, w2, w3 + w, next_time}
+          else
+            {w1, w2, w3, next_time}
+          end
+
+        Algebra.PartialOrder.less_than(t_iteration, iteration) ->
+          {w1 + w, w2, w3, next_time}
+
+        t_iteration == iteration ->
+          {w1, w2 + w, w3, next_time}
+
+        is_nil(next_time) or Algebra.PartialOrder.less_than(t, next_time) ->
+          {w1, w2, w3, t}
+
+        true ->
+          {w1, w2, w3, next_time}
+      end
+  end)
+
+w12 = w1 + w2
+w13 = w1 + w3
+w123 = w12 + w3
+w1234 = w123 + weight
+
+delta_old =
+  cond do
+    w1 <= 0 and w12 > 0 ->
+      1
+
+    w1 > 0 and w12 <= 0 ->
+      -1
+
+    true ->
+      0
+  end
+
+delta_new =
+  cond do
+    w13 <= 0 and w1234 > 0 ->
+      1
+
+    w13 > 0 and w1234 <= 0 ->
+      -1
+
+    true ->
+      0
+  end
+
+output =
+  if delta_old == delta_new do
+    output
+  else
+    w = delta_new - delta_old
+    tuple = {{key, {}}, nil, w}
+
+    [tuple | output]
+  end
+  ``````
+</details>
 
 ## 2.9.12 Join Stream Operator
 
