@@ -205,11 +205,11 @@ An operator specifies an operation against a stream, and is represented by a nod
 
 ## 2.9.1 Aggregate Operator
 
-The aggregate operatortakes an [Indexed Z-Set] as input, and applies an aggregate function over it, to return a [𝕫-Set] that summarizes the values under each key, and associating a weight of `1` to each element. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
+The aggregate operator takes an [Indexed Z-Set] as input, and applies an aggregate function over it, to return a [𝕫-Set] that summarizes the values under each key, and associating a weight of `1` to each element. The resulting $\Bbb{Z}$-Set has no timestamps associated with any element.
 
 Implementations MAY support user defined aggregates, but MUST support the aggregate functions described in the [specification for the query language][PomoLogic Aggregates].
 
-If additional aggregates are supported, they MUST be pure functions. It is RECOMMENDED thta implementations enforce this constraint.
+If additional aggregates are supported, they MUST be pure functions. It is RECOMMENDED that implementations enforce this constraint.
 
 For example:
 
@@ -566,7 +566,7 @@ join_stream(join_fun, a, b) => [
 
 ## 2.9.13 Join Trace Operator
 
-The join trace operator is a variant of an [Indexed Z-Set] join with a [Trace]. This takes advantage of the [bilinear]ity of relational joins in order to support incremental joins across timestamps.
+The join trace operator is a variant of an [Indexed Z-Set] join with a [Trace]. This takes advantage of the [bilinearity][bilinear] of relational joins in order to support incremental joins across timestamps.
 
 This operator MUST return a $\Bbb{Z}$-Set containing the resulting elements. It MUST NOT include the timestamps associated with each of those elements. Each element's weight MUST be given by the product of the two elements' weights that were joined together.
 
