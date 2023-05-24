@@ -3,7 +3,7 @@
 
 # 1. Introduction
 
-Most datalog query runtimes implement a variant of [semi-naive evaluation], where queries are iteratively refined until they reach a fixed point. Such designs can efficiently compute views over a fixed database, but are insufficient for incrementalizing evaluation over a database that changes over time. Since semi-naive evaluation of nonmonotonic queries requires evaluation on changes to the input, it can be inefficient for many applications, especially when real time operation is desired.
+Most datalog query runtimes implement a variant of [semi-naive evaluation], where queries are iteratively refined until they reach a fixed point. Such designs can efficiently compute views over a fixed database, but are insufficient for incrementalizing evaluation over a database that changes over time. Since semi-naive evaluation of nonmonotonic queries requires re-evaluation on changes to the input, it can be inefficient for many applications, especially when real time operation is desired.
 
 This document describes an alternative runtime based in the [dataflow] model. This represents programs as circuits (graphs) whose vertices and edges correspond to computation over streams of data. These circuits MAY be incrementalized to instead operate over deltas, with the results combined into a final materialized view. Converting from relation algebra to dataflow is a fully mechanical, static transformation. 
 
