@@ -87,9 +87,9 @@ Positive weights indicate the number of derivations of that element within the $
 
 ## 2.6 Time
 
-Dataflow engines require a concept of ordering. Each node in the circuit MUST be contain an incrementing integer "clock" that represents the number of times that it has been touched. [DBSP] represents [timestamp]s for the root circuit using a counter which denotes the current epoch.
+Dataflow engines require a concept of ordering. Each node in the circuit contains an incrementing integer "clock". In most (but not all) cases, this represents the number of times that the node has been touched. In general, each node has `clock_start` and `clock_stop` hooks that get called before and after evaluating that node.
 
-Every recursive subcircuit MUST refine its parent's timestamp. This is signalled via a pair which associates the timestamp with the iteration count through the subcircuit. The pairs MUST be given in the following order: `{epoch, iteration}`. Both values MUST be given as unsigned integers. They form a [partial order], and MUST use [product order] for comparison.
+Subcircuits are more complex: nodes are also notified when any of their parent circuits start or stop a clock cycle. Implementations generally parameterize those hooks over a "scope" that gives the layer of the circuit the clock event corresponds to. This is useful for things like cleaning up state at the end of an epoch.
 
 ### 2.6.1 Product Order
 
