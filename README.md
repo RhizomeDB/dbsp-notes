@@ -192,8 +192,8 @@ An operator specifies an operation against a stream, and is represented by a nod
 | [Inspect]              | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
 | [Map]                  | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
 | [Negate]               | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
-| [𝓏⁻¹ Trace]            | Linear     | Trace                                        | Trace                 |
-| [𝓏⁻¹]                  | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
+| [Delay Trace]            | Linear     | Trace                                        | Trace                 |
+| [Delay]                  | Linear     | $\Bbb{Z}$-Set                                | $\Bbb{Z}$-Set         |
 | [Distinct Trace]       | Non-Linear | $\Bbb{Z}$-Set, Trace                         | $\Bbb{Z}$-Set         |
 | [Join Stream]          | Linear     | Indexed $\Bbb{Z}$-Set, Indexed $\Bbb{Z}$-Set | $\Bbb{Z}$-Set         |
 | [Join Trace]           | Bilinear   | Indexed $\Bbb{Z}$-Set, Trace                 | $\Bbb{Z}$-Set         |
@@ -365,13 +365,13 @@ negate([
 ]
 ```
 
-## 2.9.9 $z^{-1}$ Trace Operator
+## 2.9.9 Delay Trace Operator
 
 The trace operator returns the previous input [trace].
 
-## 2.9.10 $z^{-1}$ Operator
+## 2.9.10 Delay Operator
 
-The $z^{-1}$ operator returns the previous input [𝕫-Set].
+The delay ($z^{-1}$) operator returns the previous input [𝕫-Set].
 
 ## 2.9.11 Distinct Trace Operator
 
@@ -592,7 +592,7 @@ incremental_join(join_fun, a, b) =
     join_trace(join_fun_flipped, b, a_trace)
 ```
 
-Where `z1_trace(x)` denotes an application of the [𝓏⁻¹ Trace] operator, `join_fun_flipped` flips the value arguments of `join_fun`, and `+` denotes the [Plus Operator].
+Where `z1_trace(x)` denotes an application of the [Delay Trace] operator, `join_fun_flipped` flips the value arguments of `join_fun`, and `+` denotes the [Plus Operator].
 
 For example:
 
@@ -771,6 +771,6 @@ distinct(batch, [
 [timestamp]: #25-time
 [trace]: #23-trace
 [weight]: #24-weight
-[𝓏⁻¹ Trace]: #299-z-1-trace-operator
-[𝓏⁻¹]: #2910-z-1-operator
+[Delay Trace]: #299-delay-trace-operator
+[Delay]: #2910-delay-operator
 [𝕫-Set]: #21-bbbz-set
